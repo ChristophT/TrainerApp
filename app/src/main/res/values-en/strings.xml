@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Slalom Trainer</string>
+
+    <!-- Navigation -->
+    <string name="nav_training">Training</string>
+    <string name="nav_athletes">Athletes</string>
+    <string name="nav_groups">Groups</string>
+    <string name="nav_results">Results</string>
+
+    <!-- Training Screen -->
+    <string name="training_title">Slalom Trainer</string>
+    <string name="training_subtitle">Start a new training session</string>
+    <string name="training_description_hint">Session description (optional)</string>
+    <string name="training_default_description">Training session</string>
+    <string name="start_session">Start Session</string>
+    <string name="end_session">End</string>
+    <string name="athletes_count">%d athletes</string>
+    <string name="athlete_count">%d athlete</string>
+    <string name="no_athletes_added">No athletes added yet</string>
+    <string name="add_athletes_or_group">Add athletes or a group to begin</string>
+    <string name="add_athlete">Add Athlete</string>
+    <string name="add_group">Add Group</string>
+    <string name="all_athletes_added">All athletes already added</string>
+    <string name="group_with_count">%1$s (%2$d athletes)</string>
+
+    <!-- Athletes Screen -->
+    <string name="athletes_title">Athletes</string>
+    <string name="new_athlete_name">New athlete name</string>
+    <string name="no_athletes_yet">No athletes yet. Add one above.</string>
+
+    <!-- Groups Screen -->
+    <string name="groups_title">Training Groups</string>
+    <string name="new_group_name">New group name</string>
+    <string name="no_groups_yet">No groups yet. Create one above.</string>
+    <string name="members_count">%d members</string>
+    <string name="member_count">%d member</string>
+    <string name="add_athletes_first">Add athletes first</string>
+
+    <!-- Results Screen -->
+    <string name="results_title">Results</string>
+    <string name="filter_all">All</string>
+    <string name="export_csv">Export CSV</string>
+    <string name="no_training_sessions">No training sessions yet.</string>
+    <string name="runs_count">%d runs</string>
+    <string name="run_count">%d run</string>
+    <string name="no_runs_recorded">No runs recorded</string>
+    <string name="unknown_athlete">Unknown</string>
+
+    <!-- Athlete Run Card -->
+    <string name="last_run">Last: %s</string>
+    <string name="add_note_hint">Add note…</string>
+    <string name="save">Save</string>
+    <string name="add_note">Add note</string>
+    <string name="start_run_for">Start run for %s</string>
+    <string name="stop_run_for">Stop run for %s</string>
+
+    <!-- Common Actions -->
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+
+    <!-- Content Descriptions (for accessibility) -->
+    <string name="cd_add_button">Add</string>
+    <string name="cd_edit_button">Edit</string>
+    <string name="cd_delete_button">Delete</string>
+    <string name="cd_start_button">Start</string>
+    <string name="cd_stop_button">Stop</string>
+</resources>
