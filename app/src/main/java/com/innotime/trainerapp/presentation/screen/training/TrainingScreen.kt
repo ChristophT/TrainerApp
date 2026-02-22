@@ -20,8 +20,8 @@ import com.innotime.trainerapp.presentation.util.formatDate
 
 @Composable
 fun TrainingScreen(
-    viewModel: TrainingViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: TrainingViewModel = hiltViewModel()
 ) {
     val currentTraining by viewModel.currentTraining.collectAsStateWithLifecycle()
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
@@ -32,7 +32,11 @@ fun TrainingScreen(
     var showAddAthlete by remember { mutableStateOf(false) }
     var showAddGroup by remember { mutableStateOf(false) }
 
-    if (currentTraining == null) {
+    // Create local immutable variables
+    val training = currentTraining
+    val altDesc = stringResource(R.string.training_default_description)
+
+    if (training == null) {
         // No active session - show start screen
         Box(
             modifier = modifier.fillMaxSize(),
@@ -66,7 +70,7 @@ fun TrainingScreen(
                 Button(
                     onClick = {
                         val desc = description.ifBlank {
-                            stringResource(R.string.training_default_description)
+                            altDesc
                         }
                         viewModel.startTraining(desc)
                         description = ""
@@ -85,10 +89,10 @@ fun TrainingScreen(
     } else {
         // Active session
         val participants = athletes.filter { athlete ->
-            currentTraining.participantIds.contains(athlete.id)
+            training.participantIds.contains(athlete.id)
         }
         val nonParticipants = athletes.filter { athlete ->
-            !currentTraining.participantIds.contains(athlete.id)
+            !training.participantIds.contains(athlete.id)
         }
 
         Column(
@@ -106,11 +110,11 @@ fun TrainingScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = currentTraining.description,
+                        text = training.description,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-                        text = "${formatDate(currentTraining.date)} · ${
+                        text = "${formatDate(training.date)} · ${
                             stringResource(
                                 if (participants.size == 1) R.string.athlete_count else R.string.athletes_count,
                                 participants.size

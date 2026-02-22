@@ -29,22 +29,22 @@ android {
     }
 
     // Load keystore properties if available
-    val keystorePropertiesFile = rootProject.file("keystore.properties")
-    val keystoreProperties = java.util.Properties()
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
-    }
-
-    signingConfigs {
-        create("release") {
-            if (keystorePropertiesFile.exists()) {
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-            }
-        }
-    }
+//    val keystorePropertiesFile = rootProject.file("keystore.properties")
+//    val keystoreProperties = java.util.Properties()
+//    if (keystorePropertiesFile.exists()) {
+//        keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+//    }
+//
+//    signingConfigs {
+//        create("release") {
+//            if (keystorePropertiesFile.exists()) {
+//                storeFile = file(keystoreProperties["storeFile"] as String)
+//                storePassword = keystoreProperties["storePassword"] as String
+//                keyAlias = keystoreProperties["keyAlias"] as String
+//                keyPassword = keystoreProperties["keyPassword"] as String
+//            }
+//        }
+//    }
 
     buildTypes {
         debug {
@@ -61,9 +61,9 @@ android {
             )
 
             // Sign release builds if keystore is configured
-            if (keystorePropertiesFile.exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+//            if (keystorePropertiesFile.exists()) {
+//                signingConfig = signingConfigs.getByName("release")
+//            }
         }
     }
 
