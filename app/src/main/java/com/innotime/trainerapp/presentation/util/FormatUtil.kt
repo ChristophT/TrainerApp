@@ -6,7 +6,7 @@ import kotlin.math.abs
  * Formats a duration in milliseconds to a human-readable string.
  *
  * Format rules:
- * - Under 1 minute: "5.12" (seconds with 2 decimal places)
+ * - Under 3 minutes: 123.45 (seconds with 2 decimal places)
  * - Under 1 hour: "1:05.46" (minutes:seconds.centiseconds)
  * - 1 hour or more: "1:05:45.67" (hours:minutes:seconds.centiseconds)
  *
@@ -23,6 +23,7 @@ fun formatDuration(durationMs: Long): String {
     val hours = (absDuration / 3600000).toInt()
     val minutes = ((absDuration % 3600000) / 60000).toInt()
     val seconds = ((absDuration % 60000) / 1000).toInt()
+    val absoluteSeconds = (absDuration / 1000).toInt()
     val centiseconds = ((absDuration % 1000) / 10).toInt()
 
     return when {
@@ -33,7 +34,7 @@ fun formatDuration(durationMs: Long): String {
                 sign, hours, minutes, seconds, centiseconds
             )
         }
-        minutes > 0 -> {
+        minutes > 2 -> {
             // Format: M:SS.CC
             String.format(
                 "%s%d:%02d.%02d",
@@ -44,7 +45,7 @@ fun formatDuration(durationMs: Long): String {
             // Format: S.CC
             String.format(
                 "%s%d.%02d",
-                sign, seconds, centiseconds
+                sign, absoluteSeconds, centiseconds
             )
         }
     }

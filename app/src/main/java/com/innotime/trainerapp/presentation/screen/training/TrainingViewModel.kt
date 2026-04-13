@@ -181,21 +181,7 @@ class TrainingViewModel @Inject constructor(
             val training = _currentTraining.value ?: return@launch
 
             // Stop and persist active run if exists
-            _activeRuns.value.find { it.athleteId == athleteId }?.let { activeRun ->
-                val durationMs = TimerManager.now() - activeRun.startMs
-                val run = Run(
-                    id = activeRun.id,
-                    athleteId = activeRun.athleteId,
-                    trainingId = activeRun.trainingId,
-                    startedAt = activeRun.startedAt,
-                    finishedAt = TimerManager.wallClockNow(),
-                    durationMs = durationMs,
-                    note = activeRun.note
-                )
-                runRepository.addRun(run)
-            }
-
-            _activeRuns.value = _activeRuns.value.filter { it.athleteId != athleteId }
+            stopRun(athleteId)
 
             trainingRepository.removeParticipant(training.id, athleteId)
 
@@ -365,3 +351,8 @@ class TrainingViewModel @Inject constructor(
             )
     }
 }
+
+data class Participant(
+    val athlete: Athlete,
+    val lastRun: Run?
+)
