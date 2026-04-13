@@ -74,7 +74,7 @@ fun AthleteRunCard(
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                     )
-                    if (lastRun != null && !isActive && lastRun.durationMs != null) {
+                    if (lastRun != null && lastRun.durationMs != null) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -133,7 +133,7 @@ fun AthleteRunCard(
             }
 
             // Note input (shown after stopping a run)
-            if (!isActive && lastRun != null && lastRun.note.isEmpty() && !showNoteInput) {
+            if (!isActive && lastRun != null && !showNoteInput) {
                 TextButton(
                     onClick = { showNoteInput = true },
                     modifier = Modifier.padding(top = 8.dp)
