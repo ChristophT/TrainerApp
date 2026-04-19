@@ -2,6 +2,7 @@ package com.innotime.trainerapp.data.local.database.dao
 
 import androidx.room.*
 import com.innotime.trainerapp.data.local.entity.RunEntity
+import com.innotime.trainerapp.domain.model.AthleteId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -13,7 +14,7 @@ interface RunDao {
     fun getRunsForTraining(trainingId: String): Flow<List<RunEntity>>
 
     @Query("SELECT * FROM runs WHERE athleteId = :athleteId ORDER BY startedAt DESC")
-    fun getRunsForAthlete(athleteId: String): Flow<List<RunEntity>>
+    fun getRunsForAthlete(athleteId: AthleteId): Flow<List<RunEntity>>
 
     @Query("SELECT * FROM runs WHERE id = :id")
     suspend fun getRunById(id: String): RunEntity?

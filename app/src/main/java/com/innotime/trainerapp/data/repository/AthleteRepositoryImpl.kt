@@ -4,6 +4,7 @@ import com.innotime.trainerapp.data.local.database.dao.AthleteDao
 import com.innotime.trainerapp.data.mapper.toDomain
 import com.innotime.trainerapp.data.mapper.toEntity
 import com.innotime.trainerapp.domain.model.Athlete
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.repository.AthleteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,7 +20,7 @@ class AthleteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAthleteById(id: String): Athlete? {
+    override suspend fun getAthleteById(id: AthleteId): Athlete? {
         return athleteDao.getAthleteById(id)?.toDomain()
     }
 
@@ -31,7 +32,7 @@ class AthleteRepositoryImpl @Inject constructor(
         athleteDao.updateAthlete(athlete.toEntity())
     }
 
-    override suspend fun deleteAthlete(id: String) {
+    override suspend fun deleteAthlete(id: AthleteId) {
         athleteDao.deleteAthlete(id)
     }
 }

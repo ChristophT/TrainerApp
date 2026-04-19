@@ -12,15 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.innotime.trainerapp.R
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Run
 import com.innotime.trainerapp.presentation.util.formatDuration
 
 @Composable
 fun AthleteRunCard(
     athleteName: String,
-    athleteId: String,
+    athleteId: AthleteId,
     elapsedMs: Long?,
     isActive: Boolean,
     lastRun: Run?,

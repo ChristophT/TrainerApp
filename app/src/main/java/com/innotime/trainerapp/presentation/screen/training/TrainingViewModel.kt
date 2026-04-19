@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.innotime.trainerapp.domain.model.ActiveRun
 import com.innotime.trainerapp.domain.model.Athlete
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Run
 import com.innotime.trainerapp.domain.model.Training
 import com.innotime.trainerapp.domain.model.TrainingGroup
@@ -67,7 +68,7 @@ class TrainingViewModel @Inject constructor(
     val activeRuns: StateFlow<List<ActiveRun>> = _activeRuns.asStateFlow()
 
     // Real-time timer updates (60fps)
-    val currentElapsedTimes: StateFlow<Map<String, Long>> = flow {
+    val currentElapsedTimes: StateFlow<Map<AthleteId, Long>> = flow {
         while (true) {
             emit(Unit)
             delay(16) // ~60fps
@@ -88,21 +89,21 @@ class TrainingViewModel @Inject constructor(
     fun addAthlete(name: String) {
         viewModelScope.launch {
             val athlete = Athlete(
-                id = UUID.randomUUID().toString(),
+                id = AthleteId.newId(),
                 name = name
             )
             athleteRepository.addAthlete(athlete)
         }
     }
 
-    fun updateAthlete(id: String, name: String) {
+    fun updateAthlete(id: AthleteId, name: String) {
         viewModelScope.launch {
             val athlete = athleteRepository.getAthleteById(id) ?: return@launch
             athleteRepository.updateAthlete(athlete.copy(name = name))
         }
     }
 
-    fun deleteAthlete(id: String) {
+    fun deleteAthlete(id: AthleteId) {
         viewModelScope.launch {
             // Remove from current training
             _currentTraining.value?.let { training ->
@@ -162,7 +163,7 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun addParticipant(athleteId: String) {
+    fun addParticipant(athleteId: AthleteId) {
         viewModelScope.launch {
             val training = _currentTraining.value ?: return@launch
             if (training.participantIds.contains(athleteId)) return@launch
@@ -176,7 +177,7 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun removeParticipant(athleteId: String) {
+    fun removeParticipant(athleteId: AthleteId) {
         viewModelScope.launch {
             val training = _currentTraining.value ?: return@launch
 
@@ -213,7 +214,7 @@ class TrainingViewModel @Inject constructor(
 
     // ========== Runs ==========
 
-    fun startRun(athleteId: String) {
+    fun startRun(athleteId: AthleteId) {
         val training = _currentTraining.value ?: return
         if (_activeRuns.value.any { it.athleteId == athleteId }) return
 
@@ -228,7 +229,7 @@ class TrainingViewModel @Inject constructor(
         _activeRuns.value = _activeRuns.value + activeRun
     }
 
-    fun stopRun(athleteId: String) {
+    fun stopRun(athleteId: AthleteId) {
         viewModelScope.launch {
             val activeRun = _activeRuns.value.find { it.athleteId == athleteId } ?: return@launch
             val durationMs = TimerManager.now() - activeRun.startMs
@@ -273,11 +274,11 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun getActiveRun(athleteId: String): ActiveRun? {
+    fun getActiveRun(athleteId: AthleteId): ActiveRun? {
         return _activeRuns.value.find { it.athleteId == athleteId }
     }
 
-    fun getCompletedRuns(athleteId: String): StateFlow<List<Run>> {
+    fun getCompletedRuns(athleteId: AthleteId): StateFlow<List<Run>> {
         val trainingId = _currentTraining.value?.id
         return if (trainingId != null) {
             runRepository.getRunsForTraining(trainingId)
@@ -320,7 +321,7 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun toggleGroupMember(groupId: String, athleteId: String) {
+    fun toggleGroupMember(groupId: String, athleteId: AthleteId) {
         viewModelScope.launch {
             val group = groups.value.find { it.id == groupId } ?: return@launch
             if (group.memberIds.contains(athleteId)) {
@@ -333,7 +334,7 @@ class TrainingViewModel @Inject constructor(
 
     // ========== Results ==========
 
-    fun getRunsForAthlete(athleteId: String): StateFlow<List<Run>> {
+    fun getRunsForAthlete(athleteId: AthleteId): StateFlow<List<Run>> {
         return runRepository.getRunsForAthlete(athleteId)
             .stateIn(
                 scope = viewModelScope,
