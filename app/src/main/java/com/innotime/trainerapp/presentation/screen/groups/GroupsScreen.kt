@@ -16,13 +16,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.innotime.trainerapp.R
 import com.innotime.trainerapp.domain.model.Athlete
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.TrainingGroup
 import com.innotime.trainerapp.presentation.screen.training.TrainingViewModel
 
 @Composable
 fun GroupsScreen(
+    modifier: Modifier = Modifier,
     viewModel: TrainingViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
 ) {
     val groups by viewModel.groups.collectAsStateWithLifecycle()
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
@@ -140,7 +141,7 @@ private fun GroupItem(
     onSaveEdit: () -> Unit,
     onCancelEdit: () -> Unit,
     onDelete: () -> Unit,
-    onToggleMember: (String) -> Unit,
+    onToggleMember: (AthleteId) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(

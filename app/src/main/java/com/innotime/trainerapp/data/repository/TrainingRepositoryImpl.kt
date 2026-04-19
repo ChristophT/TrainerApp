@@ -4,6 +4,7 @@ import com.innotime.trainerapp.data.local.database.dao.RunDao
 import com.innotime.trainerapp.data.local.database.dao.TrainingDao
 import com.innotime.trainerapp.data.local.entity.TrainingEntity
 import com.innotime.trainerapp.data.local.entity.TrainingParticipantEntity
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Training
 import com.innotime.trainerapp.domain.repository.TrainingRepository
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,6 @@ class TrainingRepositoryImpl @Inject constructor(
             runDao.getAllRuns()
         ) { trainingEntities, runEntities ->
             trainingEntities.map { entity ->
-                val participantIds = trainingDao.getParticipantIds(entity.id)
                 val runIds = runEntities
                     .filter { it.trainingId == entity.id }
                     .map { it.id }
@@ -84,13 +84,13 @@ class TrainingRepositoryImpl @Inject constructor(
         trainingDao.deleteTraining(id)
     }
 
-    override suspend fun addParticipant(trainingId: String, athleteId: String) {
+    override suspend fun addParticipant(trainingId: String, athleteId: AthleteId) {
         trainingDao.insertParticipant(
             TrainingParticipantEntity(trainingId, athleteId)
         )
     }
 
-    override suspend fun removeParticipant(trainingId: String, athleteId: String) {
+    override suspend fun removeParticipant(trainingId: String, athleteId: AthleteId) {
         trainingDao.deleteParticipant(trainingId, athleteId)
     }
 }

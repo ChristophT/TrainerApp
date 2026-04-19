@@ -3,6 +3,7 @@ package com.innotime.trainerapp.data.repository
 import com.innotime.trainerapp.data.local.database.dao.RunDao
 import com.innotime.trainerapp.data.mapper.toDomain
 import com.innotime.trainerapp.data.mapper.toEntity
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Run
 import com.innotime.trainerapp.domain.repository.RunRepository
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +26,7 @@ class RunRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getRunsForAthlete(athleteId: String): Flow<List<Run>> {
+    override fun getRunsForAthlete(athleteId: AthleteId): Flow<List<Run>> {
         return runDao.getRunsForAthlete(athleteId).map { entities ->
             entities.map { it.toDomain() }
         }

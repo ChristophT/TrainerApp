@@ -15,16 +15,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.innotime.trainerapp.R
 import com.innotime.trainerapp.domain.model.Athlete
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.presentation.screen.training.TrainingViewModel
 
 @Composable
 fun AthletesScreen(
+    modifier: Modifier = Modifier,
     viewModel: TrainingViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
 ) {
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
     var newAthleteName by remember { mutableStateOf("") }
-    var editingAthleteId by remember { mutableStateOf<String?>(null) }
+    var editingAthleteId by remember { mutableStateOf<AthleteId?>(null) }
     var editName by remember { mutableStateOf("") }
 
     Column(

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.innotime.trainerapp.R
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.presentation.screen.training.TrainingViewModel
 import com.innotime.trainerapp.presentation.util.CSVExporter
 import com.innotime.trainerapp.presentation.util.formatDate
@@ -25,14 +26,14 @@ import com.innotime.trainerapp.presentation.util.formatDuration
 
 @Composable
 fun ResultsScreen(
+    modifier: Modifier = Modifier,
     viewModel: TrainingViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
     val trainings by viewModel.trainings.collectAsStateWithLifecycle()
 
-    var selectedAthleteId by remember { mutableStateOf<String?>(null) }
+    var selectedAthleteId by remember { mutableStateOf<AthleteId?>(null) }
     var expandedTrainingId by remember { mutableStateOf<String?>(null) }
 
     // Sort trainings newest first

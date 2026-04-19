@@ -6,7 +6,7 @@ package com.innotime.trainerapp.domain.model
  */
 data class ActiveRun(
     val id: String,
-    val athleteId: String,
+    val athleteId: AthleteId,
     val trainingId: String,
     val startedAt: Long,           // Wall-clock: System.currentTimeMillis()
     val startMs: Long,             // Precision timer: SystemClock.elapsedRealtime()

@@ -3,6 +3,7 @@ package com.innotime.trainerapp.data.local.database.dao
 import androidx.room.*
 import com.innotime.trainerapp.data.local.entity.TrainingGroupEntity
 import com.innotime.trainerapp.data.local.entity.GroupMemberEntity
+import com.innotime.trainerapp.domain.model.AthleteId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -23,11 +24,11 @@ interface GroupDao {
     suspend fun deleteGroup(id: String)
 
     @Query("SELECT athleteId FROM group_members WHERE groupId = :groupId")
-    fun getMemberIds(groupId: String): Flow<List<String>>
+    fun getMemberIds(groupId: String): Flow<List<AthleteId>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMember(member: GroupMemberEntity)
 
     @Query("DELETE FROM group_members WHERE groupId = :groupId AND athleteId = :athleteId")
-    suspend fun deleteMember(groupId: String, athleteId: String)
+    suspend fun deleteMember(groupId: String, athleteId: AthleteId)
 }

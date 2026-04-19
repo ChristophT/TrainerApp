@@ -4,6 +4,7 @@ import com.innotime.trainerapp.data.local.database.dao.GroupDao
 import com.innotime.trainerapp.data.local.entity.GroupMemberEntity
 import com.innotime.trainerapp.data.mapper.toDomain
 import com.innotime.trainerapp.data.mapper.toEntity
+import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.TrainingGroup
 import com.innotime.trainerapp.domain.repository.GroupRepository
 import kotlinx.coroutines.flow.Flow
@@ -57,11 +58,11 @@ class GroupRepositoryImpl @Inject constructor(
         groupDao.deleteGroup(id)
     }
 
-    override suspend fun addMember(groupId: String, athleteId: String) {
+    override suspend fun addMember(groupId: String, athleteId: AthleteId) {
         groupDao.insertMember(GroupMemberEntity(groupId, athleteId))
     }
 
-    override suspend fun removeMember(groupId: String, athleteId: String) {
+    override suspend fun removeMember(groupId: String, athleteId: AthleteId) {
         groupDao.deleteMember(groupId, athleteId)
     }
 }

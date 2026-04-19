@@ -2,6 +2,7 @@ package com.innotime.trainerapp.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.innotime.trainerapp.data.local.database.dao.AthleteDao
 import com.innotime.trainerapp.data.local.database.dao.GroupDao
 import com.innotime.trainerapp.data.local.database.dao.RunDao
@@ -25,6 +26,7 @@ import com.innotime.trainerapp.data.local.entity.TrainingParticipantEntity
     version = 1,
     exportSchema = true
 )
+@TypeConverters(Converters::class)
 abstract class TrainerDatabase : RoomDatabase() {
     abstract fun athleteDao(): AthleteDao
     abstract fun runDao(): RunDao
