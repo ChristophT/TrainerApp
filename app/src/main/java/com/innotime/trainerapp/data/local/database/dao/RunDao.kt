@@ -3,6 +3,7 @@ package com.innotime.trainerapp.data.local.database.dao
 import androidx.room.*
 import com.innotime.trainerapp.data.local.entity.RunEntity
 import com.innotime.trainerapp.domain.model.AthleteId
+import com.innotime.trainerapp.domain.model.RunId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,7 +18,7 @@ interface RunDao {
     fun getRunsForAthlete(athleteId: AthleteId): Flow<List<RunEntity>>
 
     @Query("SELECT * FROM runs WHERE id = :id")
-    suspend fun getRunById(id: String): RunEntity?
+    suspend fun getRunById(id: RunId): RunEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRun(run: RunEntity)
@@ -26,7 +27,7 @@ interface RunDao {
     suspend fun updateRun(run: RunEntity)
 
     @Query("DELETE FROM runs WHERE id = :id")
-    suspend fun deleteRun(id: String)
+    suspend fun deleteRun(id: RunId)
 
     @Query("DELETE FROM runs WHERE trainingId = :trainingId")
     suspend fun deleteRunsForTraining(trainingId: String)

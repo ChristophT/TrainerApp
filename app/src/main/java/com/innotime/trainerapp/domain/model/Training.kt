@@ -5,5 +5,5 @@ data class Training(
     val date: Long,                // Timestamp in milliseconds
     val description: String,
     val participantIds: List<AthleteId>,
-    val runIds: List<String>
+    val runIds: List<RunId>
 )

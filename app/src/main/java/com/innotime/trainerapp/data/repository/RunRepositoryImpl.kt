@@ -5,6 +5,7 @@ import com.innotime.trainerapp.data.mapper.toDomain
 import com.innotime.trainerapp.data.mapper.toEntity
 import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Run
+import com.innotime.trainerapp.domain.model.RunId
 import com.innotime.trainerapp.domain.repository.RunRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -32,7 +33,7 @@ class RunRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRunById(id: String): Run? {
+    override suspend fun getRunById(id: RunId): Run? {
         return runDao.getRunById(id)?.toDomain()
     }
 
@@ -44,7 +45,7 @@ class RunRepositoryImpl @Inject constructor(
         runDao.updateRun(run.toEntity())
     }
 
-    override suspend fun deleteRun(id: String) {
+    override suspend fun deleteRun(id: RunId) {
         runDao.deleteRun(id)
     }
 
