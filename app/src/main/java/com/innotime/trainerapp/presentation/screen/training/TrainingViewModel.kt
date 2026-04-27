@@ -9,6 +9,7 @@ import com.innotime.trainerapp.domain.model.Run
 import com.innotime.trainerapp.domain.model.RunId
 import com.innotime.trainerapp.domain.model.Training
 import com.innotime.trainerapp.domain.model.TrainingGroup
+import com.innotime.trainerapp.domain.model.TrainingGroupId
 import com.innotime.trainerapp.domain.model.TrainingId
 import com.innotime.trainerapp.domain.repository.AthleteRepository
 import com.innotime.trainerapp.domain.repository.GroupRepository
@@ -25,7 +26,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -195,7 +195,7 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun addGroupToTraining(groupId: String) {
+    fun addGroupToTraining(groupId: TrainingGroupId) {
         viewModelScope.launch {
             val training = _currentTraining.value ?: return@launch
             val group = groups.value.find { it.id == groupId } ?: return@launch
@@ -302,7 +302,7 @@ class TrainingViewModel @Inject constructor(
     fun addGroup(name: String) {
         viewModelScope.launch {
             val group = TrainingGroup(
-                id = UUID.randomUUID().toString(),
+                id = TrainingGroupId.newId(),
                 name = name,
                 memberIds = emptyList()
             )
@@ -310,20 +310,20 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun updateGroup(id: String, name: String) {
+    fun updateGroup(id: TrainingGroupId, name: String) {
         viewModelScope.launch {
             val group = groupRepository.getGroupById(id) ?: return@launch
             groupRepository.updateGroup(group.copy(name = name))
         }
     }
 
-    fun deleteGroup(id: String) {
+    fun deleteGroup(id: TrainingGroupId) {
         viewModelScope.launch {
             groupRepository.deleteGroup(id)
         }
     }
 
-    fun toggleGroupMember(groupId: String, athleteId: AthleteId) {
+    fun toggleGroupMember(groupId: TrainingGroupId, athleteId: AthleteId) {
         viewModelScope.launch {
             val group = groups.value.find { it.id == groupId } ?: return@launch
             if (group.memberIds.contains(athleteId)) {

@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import com.innotime.trainerapp.domain.model.AthleteId
+import com.innotime.trainerapp.domain.model.TrainingGroupId
 
 @Entity(
     tableName = "group_members",
@@ -28,6 +29,6 @@ import com.innotime.trainerapp.domain.model.AthleteId
     ]
 )
 data class GroupMemberEntity(
-    val groupId: String,
+    val groupId: TrainingGroupId,
     val athleteId: AthleteId
 )
