@@ -4,6 +4,7 @@ import androidx.room.*
 import com.innotime.trainerapp.data.local.entity.TrainingGroupEntity
 import com.innotime.trainerapp.data.local.entity.GroupMemberEntity
 import com.innotime.trainerapp.domain.model.AthleteId
+import com.innotime.trainerapp.domain.model.TrainingGroupId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -12,7 +13,7 @@ interface GroupDao {
     fun getAllGroups(): Flow<List<TrainingGroupEntity>>
 
     @Query("SELECT * FROM training_groups WHERE id = :id")
-    suspend fun getGroupById(id: String): TrainingGroupEntity?
+    suspend fun getGroupById(id: TrainingGroupId): TrainingGroupEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGroup(group: TrainingGroupEntity)
@@ -21,14 +22,14 @@ interface GroupDao {
     suspend fun updateGroup(group: TrainingGroupEntity)
 
     @Query("DELETE FROM training_groups WHERE id = :id")
-    suspend fun deleteGroup(id: String)
+    suspend fun deleteGroup(id: TrainingGroupId)
 
     @Query("SELECT athleteId FROM group_members WHERE groupId = :groupId")
-    fun getMemberIds(groupId: String): Flow<List<AthleteId>>
+    fun getMemberIds(groupId: TrainingGroupId): Flow<List<AthleteId>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMember(member: GroupMemberEntity)
 
     @Query("DELETE FROM group_members WHERE groupId = :groupId AND athleteId = :athleteId")
-    suspend fun deleteMember(groupId: String, athleteId: AthleteId)
+    suspend fun deleteMember(groupId: TrainingGroupId, athleteId: AthleteId)
 }

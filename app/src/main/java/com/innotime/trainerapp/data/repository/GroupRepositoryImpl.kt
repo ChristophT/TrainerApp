@@ -6,6 +6,7 @@ import com.innotime.trainerapp.data.mapper.toDomain
 import com.innotime.trainerapp.data.mapper.toEntity
 import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.TrainingGroup
+import com.innotime.trainerapp.domain.model.TrainingGroupId
 import com.innotime.trainerapp.domain.repository.GroupRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -35,7 +36,7 @@ class GroupRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getGroupById(id: String): TrainingGroup? {
+    override suspend fun getGroupById(id: TrainingGroupId): TrainingGroup? {
         val entity = groupDao.getGroupById(id) ?: return null
         // Note: This is a synchronous approach - simplified for now
         return entity.toDomain(emptyList())
@@ -54,15 +55,15 @@ class GroupRepositoryImpl @Inject constructor(
         groupDao.updateGroup(group.toEntity())
     }
 
-    override suspend fun deleteGroup(id: String) {
+    override suspend fun deleteGroup(id: TrainingGroupId) {
         groupDao.deleteGroup(id)
     }
 
-    override suspend fun addMember(groupId: String, athleteId: AthleteId) {
+    override suspend fun addMember(groupId: TrainingGroupId, athleteId: AthleteId) {
         groupDao.insertMember(GroupMemberEntity(groupId, athleteId))
     }
 
-    override suspend fun removeMember(groupId: String, athleteId: AthleteId) {
+    override suspend fun removeMember(groupId: TrainingGroupId, athleteId: AthleteId) {
         groupDao.deleteMember(groupId, athleteId)
     }
 }

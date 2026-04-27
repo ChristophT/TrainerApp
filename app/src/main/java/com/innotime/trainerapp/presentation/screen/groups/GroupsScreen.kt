@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,6 +19,7 @@ import com.innotime.trainerapp.R
 import com.innotime.trainerapp.domain.model.Athlete
 import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.TrainingGroup
+import com.innotime.trainerapp.domain.model.TrainingGroupId
 import com.innotime.trainerapp.presentation.screen.training.TrainingViewModel
 
 @Composable
@@ -28,9 +30,9 @@ fun GroupsScreen(
     val groups by viewModel.groups.collectAsStateWithLifecycle()
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
     var newGroupName by remember { mutableStateOf("") }
-    var editingGroupId by remember { mutableStateOf<String?>(null) }
+    var editingGroupId by remember { mutableStateOf<TrainingGroupId?>(null) }
     var editName by remember { mutableStateOf("") }
-    var expandedGroupId by remember { mutableStateOf<String?>(null) }
+    var expandedGroupId by remember { mutableStateOf<TrainingGroupId?>(null) }
 
     Column(
         modifier = modifier
@@ -186,7 +188,7 @@ private fun GroupItem(
                     ) {
                         IconButton(onClick = onToggleExpand) {
                             Icon(
-                                imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
+                                imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                 contentDescription = if (isExpanded) "Collapse" else "Expand"
                             )
                         }
@@ -234,7 +236,7 @@ private fun GroupItem(
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 16.dp)
                 ) {
-                    Divider(modifier = Modifier.padding(bottom = 12.dp))
+                    HorizontalDivider(modifier = Modifier.padding(bottom = 12.dp))
 
                     if (athletes.isEmpty()) {
                         Text(
