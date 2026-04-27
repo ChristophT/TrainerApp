@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.innotime.trainerapp.R
 import com.innotime.trainerapp.domain.model.AthleteId
+import com.innotime.trainerapp.domain.model.TrainingId
 import com.innotime.trainerapp.presentation.screen.training.TrainingViewModel
 import com.innotime.trainerapp.presentation.util.CSVExporter
 import com.innotime.trainerapp.presentation.util.formatDate
@@ -34,7 +36,7 @@ fun ResultsScreen(
     val trainings by viewModel.trainings.collectAsStateWithLifecycle()
 
     var selectedAthleteId by remember { mutableStateOf<AthleteId?>(null) }
-    var expandedTrainingId by remember { mutableStateOf<String?>(null) }
+    var expandedTrainingId by remember { mutableStateOf<TrainingId?>(null) }
 
     // Sort trainings newest first
     val sortedTrainings = remember(trainings) {
@@ -186,7 +188,7 @@ private fun TrainingResultItem(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
-                        imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
+                        imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = if (isExpanded) "Collapse" else "Expand",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -222,7 +224,7 @@ private fun TrainingResultItem(
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 16.dp)
                 ) {
-                    Divider(modifier = Modifier.padding(bottom = 12.dp))
+                    HorizontalDivider(modifier = Modifier.padding(bottom = 12.dp))
 
                     if (runs.isEmpty()) {
                         Text(

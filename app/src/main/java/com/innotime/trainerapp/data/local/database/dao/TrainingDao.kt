@@ -4,6 +4,7 @@ import androidx.room.*
 import com.innotime.trainerapp.data.local.entity.TrainingEntity
 import com.innotime.trainerapp.data.local.entity.TrainingParticipantEntity
 import com.innotime.trainerapp.domain.model.AthleteId
+import com.innotime.trainerapp.domain.model.TrainingId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -12,7 +13,7 @@ interface TrainingDao {
     fun getAllTrainings(): Flow<List<TrainingEntity>>
 
     @Query("SELECT * FROM trainings WHERE id = :id")
-    suspend fun getTrainingById(id: String): TrainingEntity?
+    suspend fun getTrainingById(id: TrainingId): TrainingEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTraining(training: TrainingEntity)
@@ -21,14 +22,14 @@ interface TrainingDao {
     suspend fun updateTraining(training: TrainingEntity)
 
     @Query("DELETE FROM trainings WHERE id = :id")
-    suspend fun deleteTraining(id: String)
+    suspend fun deleteTraining(id: TrainingId)
 
     @Query("SELECT athleteId FROM training_participants WHERE trainingId = :trainingId")
-    fun getParticipantIds(trainingId: String): Flow<List<AthleteId>>
+    fun getParticipantIds(trainingId: TrainingId): Flow<List<AthleteId>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertParticipant(participant: TrainingParticipantEntity)
 
     @Query("DELETE FROM training_participants WHERE trainingId = :trainingId AND athleteId = :athleteId")
-    suspend fun deleteParticipant(trainingId: String, athleteId: AthleteId)
+    suspend fun deleteParticipant(trainingId: TrainingId, athleteId: AthleteId)
 }

@@ -9,6 +9,7 @@ import com.innotime.trainerapp.domain.model.Run
 import com.innotime.trainerapp.domain.model.RunId
 import com.innotime.trainerapp.domain.model.Training
 import com.innotime.trainerapp.domain.model.TrainingGroup
+import com.innotime.trainerapp.domain.model.TrainingId
 import com.innotime.trainerapp.domain.repository.AthleteRepository
 import com.innotime.trainerapp.domain.repository.GroupRepository
 import com.innotime.trainerapp.domain.repository.RunRepository
@@ -130,7 +131,7 @@ class TrainingViewModel @Inject constructor(
     fun startTraining(description: String) {
         viewModelScope.launch {
             val training = Training(
-                id = UUID.randomUUID().toString(),
+                id = TrainingId.newId(),
                 date = TimerManager.wallClockNow(),
                 description = description,
                 participantIds = emptyList(),
@@ -344,7 +345,7 @@ class TrainingViewModel @Inject constructor(
             )
     }
 
-    fun getRunsForTraining(trainingId: String): StateFlow<List<Run>> {
+    fun getRunsForTraining(trainingId: TrainingId): StateFlow<List<Run>> {
         return runRepository.getRunsForTraining(trainingId)
             .stateIn(
                 scope = viewModelScope,

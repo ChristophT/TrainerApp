@@ -6,6 +6,7 @@ import com.innotime.trainerapp.data.local.entity.TrainingEntity
 import com.innotime.trainerapp.data.local.entity.TrainingParticipantEntity
 import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Training
+import com.innotime.trainerapp.domain.model.TrainingId
 import com.innotime.trainerapp.domain.repository.TrainingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -43,7 +44,7 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTrainingById(id: String): Training? {
+    override suspend fun getTrainingById(id: TrainingId): Training? {
         val entity = trainingDao.getTrainingById(id) ?: return null
         // Note: This is synchronous fetch of participant IDs - not ideal but simplified
         return Training(
@@ -80,17 +81,17 @@ class TrainingRepositoryImpl @Inject constructor(
         trainingDao.updateTraining(entity)
     }
 
-    override suspend fun deleteTraining(id: String) {
+    override suspend fun deleteTraining(id: TrainingId) {
         trainingDao.deleteTraining(id)
     }
 
-    override suspend fun addParticipant(trainingId: String, athleteId: AthleteId) {
+    override suspend fun addParticipant(trainingId: TrainingId, athleteId: AthleteId) {
         trainingDao.insertParticipant(
             TrainingParticipantEntity(trainingId, athleteId)
         )
     }
 
-    override suspend fun removeParticipant(trainingId: String, athleteId: AthleteId) {
+    override suspend fun removeParticipant(trainingId: TrainingId, athleteId: AthleteId) {
         trainingDao.deleteParticipant(trainingId, athleteId)
     }
 }
