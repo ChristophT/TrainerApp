@@ -7,7 +7,7 @@ import java.util.UUID
 data class Run(
     val id: RunId,
     val athleteId: AthleteId,
-    val trainingId: String,
+    val trainingId: TrainingId,
     val startedAt: Long,           // Wall-clock timestamp (System.currentTimeMillis())
     val finishedAt: Long?,         // Wall-clock timestamp when stopped
     val durationMs: Long?,         // Precise duration in milliseconds

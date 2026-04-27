@@ -4,6 +4,7 @@ import androidx.room.*
 import com.innotime.trainerapp.data.local.entity.RunEntity
 import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.RunId
+import com.innotime.trainerapp.domain.model.TrainingId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -12,7 +13,7 @@ interface RunDao {
     fun getAllRuns(): Flow<List<RunEntity>>
 
     @Query("SELECT * FROM runs WHERE trainingId = :trainingId ORDER BY startedAt DESC")
-    fun getRunsForTraining(trainingId: String): Flow<List<RunEntity>>
+    fun getRunsForTraining(trainingId: TrainingId): Flow<List<RunEntity>>
 
     @Query("SELECT * FROM runs WHERE athleteId = :athleteId ORDER BY startedAt DESC")
     fun getRunsForAthlete(athleteId: AthleteId): Flow<List<RunEntity>>
@@ -30,5 +31,5 @@ interface RunDao {
     suspend fun deleteRun(id: RunId)
 
     @Query("DELETE FROM runs WHERE trainingId = :trainingId")
-    suspend fun deleteRunsForTraining(trainingId: String)
+    suspend fun deleteRunsForTraining(trainingId: TrainingId)
 }
