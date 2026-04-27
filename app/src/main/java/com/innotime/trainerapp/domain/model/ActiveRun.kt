@@ -5,7 +5,7 @@ package com.innotime.trainerapp.domain.model
  * This is kept in memory only and not persisted until the run is stopped.
  */
 data class ActiveRun(
-    val id: String,
+    val id: RunId,
     val athleteId: AthleteId,
     val trainingId: String,
     val startedAt: Long,           // Wall-clock: System.currentTimeMillis()

@@ -5,6 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.innotime.trainerapp.domain.model.AthleteId
+import com.innotime.trainerapp.domain.model.RunId
 
 @Entity(
     tableName = "runs",
@@ -29,7 +30,7 @@ import com.innotime.trainerapp.domain.model.AthleteId
 )
 data class RunEntity(
     @PrimaryKey
-    val id: String,
+    val id: RunId,
     val athleteId: AthleteId,
     val trainingId: String,
     val startedAt: Long,

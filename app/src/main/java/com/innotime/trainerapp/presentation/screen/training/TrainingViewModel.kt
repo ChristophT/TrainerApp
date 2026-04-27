@@ -6,6 +6,7 @@ import com.innotime.trainerapp.domain.model.ActiveRun
 import com.innotime.trainerapp.domain.model.Athlete
 import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Run
+import com.innotime.trainerapp.domain.model.RunId
 import com.innotime.trainerapp.domain.model.Training
 import com.innotime.trainerapp.domain.model.TrainingGroup
 import com.innotime.trainerapp.domain.repository.AthleteRepository
@@ -219,7 +220,7 @@ class TrainingViewModel @Inject constructor(
         if (_activeRuns.value.any { it.athleteId == athleteId }) return
 
         val activeRun = ActiveRun(
-            id = UUID.randomUUID().toString(),
+            id = RunId.newId(),
             athleteId = athleteId,
             trainingId = training.id,
             startedAt = TimerManager.wallClockNow(),
@@ -257,7 +258,7 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun updateRunNote(runId: String, note: String) {
+    fun updateRunNote(runId: RunId, note: String) {
         viewModelScope.launch {
             // Update active run if exists
             val activeRunIndex = _activeRuns.value.indexOfFirst { it.id == runId }
