@@ -17,13 +17,17 @@ import com.innotime.trainerapp.domain.repository.RunRepository
 import com.innotime.trainerapp.domain.repository.TrainingRepository
 import com.innotime.trainerapp.presentation.util.TimerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -68,6 +72,26 @@ class TrainingViewModel @Inject constructor(
 
     private val _activeRuns = MutableStateFlow<List<ActiveRun>>(emptyList())
     val activeRuns: StateFlow<List<ActiveRun>> = _activeRuns.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val completedRunsByAthlete: StateFlow<Map<AthleteId, List<Run>>> =
+        _currentTraining
+            .flatMapLatest { training ->
+                if (training != null) {
+                    runRepository.getRunsForTraining(training.id)
+                        .map { runs ->
+                            runs.filter { it.durationMs != null }
+                                .groupBy { it.athleteId }
+                        }
+                } else {
+                    flowOf(emptyMap())
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyMap()
+            )
 
     // Real-time timer updates (60fps)
     val currentElapsedTimes: StateFlow<Map<AthleteId, Long>> = flow {
@@ -179,22 +203,6 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun removeParticipant(athleteId: AthleteId) {
-        viewModelScope.launch {
-            val training = _currentTraining.value ?: return@launch
-
-            // Stop and persist active run if exists
-            stopRun(athleteId)
-
-            trainingRepository.removeParticipant(training.id, athleteId)
-
-            val updated = training.copy(
-                participantIds = training.participantIds.filter { it != athleteId }
-            )
-            _currentTraining.value = updated
-        }
-    }
-
     fun addGroupToTraining(groupId: TrainingGroupId) {
         viewModelScope.launch {
             val training = _currentTraining.value ?: return@launch
@@ -280,23 +288,6 @@ class TrainingViewModel @Inject constructor(
         return _activeRuns.value.find { it.athleteId == athleteId }
     }
 
-    fun getCompletedRuns(athleteId: AthleteId): StateFlow<List<Run>> {
-        val trainingId = _currentTraining.value?.id
-        return if (trainingId != null) {
-            runRepository.getRunsForTraining(trainingId)
-                .combine(flow { emit(athleteId) }) { runs, id ->
-                    runs.filter { it.athleteId == id && it.durationMs != null }
-                }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5000),
-                    initialValue = emptyList()
-                )
-        } else {
-            MutableStateFlow(emptyList())
-        }
-    }
-
     // ========== Groups ==========
 
     fun addGroup(name: String) {
@@ -354,8 +345,3 @@ class TrainingViewModel @Inject constructor(
             )
     }
 }
-
-data class Participant(
-    val athlete: Athlete,
-    val lastRun: Run?
-)
