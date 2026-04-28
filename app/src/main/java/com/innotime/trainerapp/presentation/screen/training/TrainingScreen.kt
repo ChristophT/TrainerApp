@@ -27,6 +27,7 @@ fun TrainingScreen(
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
     val groups by viewModel.groups.collectAsStateWithLifecycle()
     val elapsedTimes by viewModel.currentElapsedTimes.collectAsStateWithLifecycle()
+    val completedRunsByAthlete by viewModel.completedRunsByAthlete.collectAsStateWithLifecycle()
 
     var description by remember { mutableStateOf("") }
     var showAddAthlete by remember { mutableStateOf(false) }
@@ -174,8 +175,7 @@ fun TrainingScreen(
 
                 items(participants, key = { it.id }) { athlete ->
                     val activeRun = viewModel.getActiveRun(athlete.id)
-                    val completedRuns by viewModel.getCompletedRuns(athlete.id).collectAsStateWithLifecycle()
-                    val lastRun = completedRuns.lastOrNull()
+                    val lastRun = completedRunsByAthlete[athlete.id]?.lastOrNull()
 
                     AthleteRunCard(
                         athleteName = athlete.name,
