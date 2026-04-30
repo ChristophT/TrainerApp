@@ -17,7 +17,6 @@ import com.innotime.trainerapp.domain.repository.RunRepository
 import com.innotime.trainerapp.domain.repository.TrainingRepository
 import com.innotime.trainerapp.presentation.util.TimerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -73,7 +72,19 @@ class TrainingViewModel @Inject constructor(
     private val _activeRuns = MutableStateFlow<List<ActiveRun>>(emptyList())
     val activeRuns: StateFlow<List<ActiveRun>> = _activeRuns.asStateFlow()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    val runsPerTraining: StateFlow<Map<TrainingId, List<Run>>> = trainings
+        .flatMapLatest { trainingList ->
+            if (trainingList.isEmpty()) return@flatMapLatest flowOf(emptyMap())
+            combine(trainingList.map { training ->
+                runRepository.getRunsForTraining(training.id).map { runs -> training.id to runs }
+            }) { pairs -> pairs.toMap() }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyMap()
+        )
+
     val completedRunsByAthlete: StateFlow<Map<AthleteId, List<Run>>> =
         _currentTraining
             .flatMapLatest { training ->
@@ -198,6 +209,22 @@ class TrainingViewModel @Inject constructor(
 
             val updated = training.copy(
                 participantIds = training.participantIds + athleteId
+            )
+            _currentTraining.value = updated
+        }
+    }
+
+    fun removeParticipant(athleteId: AthleteId) {
+        viewModelScope.launch {
+            val training = _currentTraining.value ?: return@launch
+
+            // Stop and persist active run if exists
+            stopRun(athleteId)
+
+            trainingRepository.removeParticipant(training.id, athleteId)
+
+            val updated = training.copy(
+                participantIds = training.participantIds.filter { it != athleteId }
             )
             _currentTraining.value = updated
         }
@@ -345,3 +372,8 @@ class TrainingViewModel @Inject constructor(
             )
     }
 }
+
+data class Participant(
+    val athlete: Athlete,
+    val lastRun: Run?
+)
