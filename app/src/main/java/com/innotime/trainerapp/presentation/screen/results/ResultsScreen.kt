@@ -34,6 +34,7 @@ fun ResultsScreen(
     val context = LocalContext.current
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
     val trainings by viewModel.trainings.collectAsStateWithLifecycle()
+    val runsPerTraining by viewModel.runsPerTraining.collectAsStateWithLifecycle()
 
     var selectedAthleteId by remember { mutableStateOf<AthleteId?>(null) }
     var expandedTrainingId by remember { mutableStateOf<TrainingId?>(null) }
@@ -129,7 +130,7 @@ fun ResultsScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(sortedTrainings, key = { it.id }) { training ->
-                    val trainingRuns by viewModel.getRunsForTraining(training.id).collectAsStateWithLifecycle()
+                    val trainingRuns = runsPerTraining[training.id] ?: emptyList()
 
                     val filteredRuns = trainingRuns
                         .filter { it.durationMs != null }
