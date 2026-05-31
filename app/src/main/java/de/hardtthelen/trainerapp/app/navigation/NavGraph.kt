@@ -21,19 +21,19 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable(NavigationDestinations.Training.route) {
-            TrainingScreen(modifier = modifier)
+            TrainingScreen()
         }
 
         composable(NavigationDestinations.Athletes.route) {
-            AthletesScreen(modifier = modifier)
+            AthletesScreen()
         }
 
         composable(NavigationDestinations.Groups.route) {
-            GroupsScreen(modifier = modifier)
+            GroupsScreen()
         }
 
         composable(NavigationDestinations.Results.route) {
-            ResultsScreen(modifier = modifier)
+            ResultsScreen()
         }
     }
 }

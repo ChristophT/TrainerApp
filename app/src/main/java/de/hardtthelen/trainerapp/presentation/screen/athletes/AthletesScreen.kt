@@ -89,7 +89,8 @@ fun AthletesScreen(
             }
         } else {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.weight(1f)
             ) {
                 items(athletes, key = { it.id }) { athlete ->
                     AthleteItem(

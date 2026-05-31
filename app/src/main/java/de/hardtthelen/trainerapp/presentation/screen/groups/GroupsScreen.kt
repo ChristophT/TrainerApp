@@ -95,7 +95,8 @@ fun GroupsScreen(
             }
         } else {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.weight(1f)
             ) {
                 items(groups, key = { it.id }) { group ->
                     GroupItem(

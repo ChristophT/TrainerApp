@@ -127,7 +127,8 @@ fun ResultsScreen(
             }
         } else {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.weight(1f)
             ) {
                 items(sortedTrainings, key = { it.id }) { training ->
                     val trainingRuns = runsPerTraining[training.id] ?: emptyList()
