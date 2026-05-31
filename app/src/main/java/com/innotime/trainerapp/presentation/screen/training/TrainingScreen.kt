@@ -175,11 +175,10 @@ fun TrainingScreen(
 
                 items(participants, key = { it.id }) { athlete ->
                     val activeRun = viewModel.getActiveRun(athlete.id)
-                    val lastRun = completedRunsByAthlete[athlete.id]?.lastOrNull()
+                    val lastRun = completedRunsByAthlete[athlete.id]?.firstOrNull()
 
                     AthleteRunCard(
                         athleteName = athlete.name,
-                        athleteId = athlete.id,
                         elapsedMs = elapsedTimes[athlete.id],
                         isActive = activeRun != null,
                         lastRun = lastRun,

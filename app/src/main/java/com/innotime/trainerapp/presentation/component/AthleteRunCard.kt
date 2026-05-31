@@ -13,14 +13,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.innotime.trainerapp.R
-import com.innotime.trainerapp.domain.model.AthleteId
 import com.innotime.trainerapp.domain.model.Run
 import com.innotime.trainerapp.presentation.util.formatDuration
 
 @Composable
 fun AthleteRunCard(
     athleteName: String,
-    athleteId: AthleteId,
     elapsedMs: Long?,
     isActive: Boolean,
     lastRun: Run?,
@@ -29,8 +27,8 @@ fun AthleteRunCard(
     onUpdateNote: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showNoteInput by remember { mutableStateOf(false) }
-    var noteText by remember { mutableStateOf("") }
+    var showNoteInput by remember(lastRun?.id) { mutableStateOf(false) }
+    var noteText by remember(lastRun?.id) { mutableStateOf(lastRun?.note ?: "") }
 
     val borderColor = if (isActive) {
         MaterialTheme.colorScheme.primary
