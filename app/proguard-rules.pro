@@ -3,8 +3,8 @@
 # proguardFiles setting in build.gradle.
 
 # Keep Room entities and DAOs
--keep class com.innotime.trainerapp.data.local.entity.** { *; }
--keep interface com.innotime.trainerapp.data.local.database.dao.** { *; }
+-keep class de.hardtthelen.trainerapp.data.local.entity.** { *; }
+-keep interface de.hardtthelen.trainerapp.data.local.database.dao.** { *; }
 
 # Keep Hilt generated classes
 -keep class dagger.hilt.** { *; }
@@ -12,7 +12,7 @@
 -keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }
 
 # Keep domain models
--keep class com.innotime.trainerapp.domain.model.** { *; }
+-keep class de.hardtthelen.trainerapp.domain.model.** { *; }
 
 # Kotlin Coroutines
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}

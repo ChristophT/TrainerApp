@@ -9,7 +9,7 @@ The app uses a three-layer testing approach:
 ```
 app/src/
 ├── test/                    # Unit Tests (JVM)
-│   └── java/com/innotime/trainerapp/
+│   └── java/de/hardtthelen/trainerapp/
 │       └── presentation/
 │           ├── util/
 │           │   └── FormatUtilTest.kt
@@ -17,7 +17,7 @@ app/src/
 │               └── TrainingViewModelTest.kt
 │
 └── androidTest/             # Integration & UI Tests (Android)
-    └── java/com/innotime/trainerapp/
+    └── java/de/hardtthelen/trainerapp/
         └── data/repository/
             └── AthleteRepositoryImplTest.kt
 ```
@@ -64,7 +64,7 @@ app/src/
 ./gradlew connectedAndroidTest
 
 # Specific test class
-./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.innotime.trainerapp.data.repository.AthleteRepositoryImplTest
+./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=de.hardtthelen.trainerapp.data.repository.AthleteRepositoryImplTest
 ```
 
 **Tools**:
@@ -195,7 +195,7 @@ class MyRepositoryTest {
 # Report: app/build/reports/coverage/test/debug/index.html
 
 # Specific package
-./gradlew test --tests "com.innotime.trainerapp.presentation.*"
+./gradlew test --tests "de.hardtthelen.trainerapp.presentation.*"
 
 # Watch mode (continuous testing)
 ./gradlew test --continuous

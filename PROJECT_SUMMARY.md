@@ -317,7 +317,7 @@ trainerApp/
 │   └── src/
 │       ├── main/                  # Main source code
 │       │   ├── AndroidManifest.xml
-│       │   ├── java/com/innotime/trainerapp/
+│       │   ├── java/de/hardtthelen/trainerapp/
 │       │   │   ├── app/          # Application & Activity
 │       │   │   ├── data/         # Data layer (16 files)
 │       │   │   ├── di/           # DI modules (2 files)
