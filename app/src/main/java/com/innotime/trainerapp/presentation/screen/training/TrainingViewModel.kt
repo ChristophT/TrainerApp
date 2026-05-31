@@ -214,22 +214,6 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    fun removeParticipant(athleteId: AthleteId) {
-        viewModelScope.launch {
-            val training = _currentTraining.value ?: return@launch
-
-            // Stop and persist active run if exists
-            stopRun(athleteId)
-
-            trainingRepository.removeParticipant(training.id, athleteId)
-
-            val updated = training.copy(
-                participantIds = training.participantIds.filter { it != athleteId }
-            )
-            _currentTraining.value = updated
-        }
-    }
-
     fun addGroupToTraining(groupId: TrainingGroupId) {
         viewModelScope.launch {
             val training = _currentTraining.value ?: return@launch
@@ -304,7 +288,7 @@ class TrainingViewModel @Inject constructor(
                 _activeRuns.value = updated
             }
 
-            // Also update persisted run if exists
+            // Always try to update persisted run
             runRepository.getRunById(runId)?.let { run ->
                 runRepository.updateRun(run.copy(note = note))
             }
@@ -372,8 +356,3 @@ class TrainingViewModel @Inject constructor(
             )
     }
 }
-
-data class Participant(
-    val athlete: Athlete,
-    val lastRun: Run?
-)
