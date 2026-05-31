@@ -59,4 +59,4 @@ Thumbs.db
 *.kt.swp
 /.gradle/
 /gradle/gradle-daemon-jvm.properties
-/app/schemas/com.innotime.trainerapp.data.local.database.TrainerDatabase/1.json
+/app/schemas/de.hardtthelen.trainerapp.data.local.database.TrainerDatabase/1.json

@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.innotime.trainerapp"
+    namespace = "de.hardtthelen.trainerapp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.innotime.trainerapp"
+        applicationId = "de.hardtthelen.trainerapp"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -85,6 +85,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
         }
     }
 }
@@ -134,7 +136,11 @@ dependencies {
     // Testing - Android
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.mockkandroid)
+    androidTestImplementation(libs.turbine)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }

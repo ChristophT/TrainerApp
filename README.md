@@ -58,7 +58,7 @@ The app follows Clean Architecture principles with three distinct layers:
 ## 📁 Project Structure
 
 ```
-com.innotime.trainerapp/
+de.hardtthelen.trainerapp/
 ├── app/
 │   ├── MainActivity.kt                 # Single activity entry point
 │   ├── TrainerApplication.kt           # Hilt application class
