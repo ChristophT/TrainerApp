@@ -155,6 +155,9 @@ fun ResultsScreen(
                             } else {
                                 training.id
                             }
+                        },
+                        onDelete = {
+                            viewModel.deleteFinishedTrainingSession(it)
                         }
                     )
                 }
@@ -170,6 +173,7 @@ private fun TrainingResultItem(
     athletes: List<de.hardtthelen.trainerapp.domain.model.Athlete>,
     isExpanded: Boolean,
     onToggleExpand: () -> Unit,
+    onDelete: (TrainingId) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -209,6 +213,13 @@ private fun TrainingResultItem(
                             }",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    IconButton(onClick = { onDelete(training.id) }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.cd_delete_button),
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 }

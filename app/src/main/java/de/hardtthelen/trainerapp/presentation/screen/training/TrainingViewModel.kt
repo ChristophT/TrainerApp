@@ -355,4 +355,10 @@ class TrainingViewModel @Inject constructor(
                 initialValue = emptyList()
             )
     }
+
+    fun deleteFinishedTrainingSession(trainingId: TrainingId) {
+        viewModelScope.launch {
+            trainingRepository.deleteTraining(trainingId)
+        }
+    }
 }
