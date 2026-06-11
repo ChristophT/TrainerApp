@@ -47,6 +47,8 @@
     <string name="run_count">%d Lauf</string>
     <string name="no_runs_recorded">Keine Läufe aufgezeichnet</string>
     <string name="unknown_athlete">Unbekannt</string>
+    <string name="delete_session">Einheit löschen</string>
+    <string name="delete_session_confirm">Soll diese Trainingseinheit gelöscht werden?</string>
 
     <!-- Athlete Run Card -->
     <string name="last_run">Letzter: %s</string>
