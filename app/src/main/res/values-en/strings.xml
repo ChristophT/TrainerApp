@@ -47,6 +47,8 @@
     <string name="run_count">%d run</string>
     <string name="no_runs_recorded">No runs recorded</string>
     <string name="unknown_athlete">Unknown</string>
+    <string name="delete_session">Delete session</string>
+    <string name="delete_session_confirm">Delete this training session?</string>
 
     <!-- Athlete Run Card -->
     <string name="last_run">Last: %s</string>

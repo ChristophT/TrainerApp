@@ -158,7 +158,8 @@ fun ResultsScreen(
                         },
                         onDelete = {
                             viewModel.deleteFinishedTrainingSession(it)
-                        }
+                        },
+                        viewModel
                     )
                 }
             }
@@ -174,8 +175,11 @@ private fun TrainingResultItem(
     isExpanded: Boolean,
     onToggleExpand: () -> Unit,
     onDelete: (TrainingId) -> Unit,
+    viewModel: TrainingViewModel,
     modifier: Modifier = Modifier
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         onClick = onToggleExpand
@@ -215,11 +219,24 @@ private fun TrainingResultItem(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    IconButton(onClick = { onDelete(training.id) }) {
+                    IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(R.string.cd_delete_button),
                             tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+
+                    if (showDeleteDialog) {
+                        DeleteConfirmationDialog(
+                            sessionName = training.description,
+                            onConfirm = {
+                                showDeleteDialog = false
+                                onDelete(training.id)
+                            },
+                            onDismiss = {
+                                showDeleteDialog = false
+                            }
                         )
                     }
                 }
