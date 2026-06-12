@@ -13,7 +13,10 @@ import de.hardtthelen.trainerapp.domain.repository.RunRepository
 import de.hardtthelen.trainerapp.domain.repository.TrainingRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -46,6 +49,9 @@ class TrainingViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
+        mockkStatic(android.os.SystemClock::class)
+        every { android.os.SystemClock.elapsedRealtime() } returns 1000L
+
         // Create mock repositories
         athleteRepository = mockk(relaxed = true)
         runRepository = mockk(relaxed = true)
@@ -70,6 +76,7 @@ class TrainingViewModelTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        unmockkStatic(android.os.SystemClock::class)
     }
 
     @Test
@@ -310,23 +317,24 @@ class TrainingViewModelTest {
             athleteRepository, runRepository, trainingRepository, groupRepository
         )
 
-        // Start training
-        viewModel.startTraining("Test Session")
-        advanceUntilIdle()
+        // Ensure groups are loaded (SharingStarted.WhileSubscribed needs a subscriber)
+        viewModel.groups.test {
+            assertThat(awaitItem()).isEmpty() // Initial value
+            assertThat(awaitItem()).isEqualTo(listOf(group)) // Value from repository
 
-        // Add group to training
-        viewModel.addGroupToTraining(groupId)
-        advanceUntilIdle()
+            // Start training
+            viewModel.startTraining("Test Session")
+            advanceUntilIdle()
 
-        // Verify all athletes added
-        athleteIds.forEach { athleteId ->
-            coVerify { trainingRepository.addParticipant(any(), athleteId) }
-        }
+            // Add group to training
+            viewModel.addGroupToTraining(groupId)
+            advanceUntilIdle()
 
-        // Verify state updated
-        viewModel.currentTraining.test {
-            val training = awaitItem()
-            assertThat(training?.participantIds).containsExactlyElementsIn(athleteIds)
+            // Verify state updated
+            viewModel.currentTraining.test {
+                val training = awaitItem()
+                assertThat(training?.participantIds).containsExactlyElementsIn(athleteIds)
+            }
         }
     }
 

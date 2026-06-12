@@ -82,8 +82,10 @@ class AthletesScreenTest {
 
         // Recreate ViewModel with new data
         viewModel = TrainingViewModel(
-            athleteRepository, mockk(relaxed = true),
-            mockk(relaxed = true), mockk(relaxed = true)
+            athleteRepository = athleteRepository,
+            runRepository = mockk(relaxed = true),
+            trainingRepository = mockk(relaxed = true),
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {
@@ -162,8 +164,10 @@ class AthletesScreenTest {
         coEvery { athleteRepository.getAllAthletes() } returns flowOf(athletes)
 
         viewModel = TrainingViewModel(
-            athleteRepository, mockk(relaxed = true),
-            mockk(relaxed = true), mockk(relaxed = true)
+            athleteRepository = athleteRepository,
+            runRepository = mockk(relaxed = true),
+            trainingRepository = mockk(relaxed = true),
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {
@@ -194,8 +198,10 @@ class AthletesScreenTest {
         coEvery { athleteRepository.getAllAthletes() } returns flowOf(athletes)
 
         viewModel = TrainingViewModel(
-            athleteRepository, mockk(relaxed = true),
-            mockk(relaxed = true), mockk(relaxed = true)
+            athleteRepository = athleteRepository,
+            runRepository = mockk(relaxed = true),
+            trainingRepository = mockk(relaxed = true),
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {
@@ -217,8 +223,10 @@ class AthletesScreenTest {
         coEvery { athleteRepository.getAllAthletes() } returns flowOf(athletes)
 
         viewModel = TrainingViewModel(
-            athleteRepository, mockk(relaxed = true),
-            mockk(relaxed = true), mockk(relaxed = true)
+            athleteRepository = athleteRepository,
+            runRepository = mockk(relaxed = true),
+            trainingRepository = mockk(relaxed = true),
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {
@@ -271,8 +279,10 @@ class AthletesScreenTest {
         coEvery { athleteRepository.getAllAthletes() } returns flowOf(athletes)
 
         viewModel = TrainingViewModel(
-            athleteRepository, mockk(relaxed = true),
-            mockk(relaxed = true), mockk(relaxed = true)
+            athleteRepository = athleteRepository,
+            runRepository = mockk(relaxed = true),
+            trainingRepository = mockk(relaxed = true),
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {

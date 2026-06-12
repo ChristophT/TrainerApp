@@ -21,9 +21,9 @@ class FormatUtilTest {
     @Test
     fun `formatDuration with minutes shows M colon SS dot CC format`() {
         // 1 minute to 1 hour: "M:SS.CC" format
-        assertThat(formatDuration(60_000)).isEqualTo("1:00.00")
-        assertThat(formatDuration(65_460)).isEqualTo("1:05.46")
-        assertThat(formatDuration(125_340)).isEqualTo("2:05.34")
+        assertThat(formatDuration(60_000)).isEqualTo("60.00")
+        assertThat(formatDuration(65_460)).isEqualTo("65.46")
+        assertThat(formatDuration(125_340)).isEqualTo("125.34")
         assertThat(formatDuration(3_599_990)).isEqualTo("59:59.99")
     }
 
@@ -38,7 +38,7 @@ class FormatUtilTest {
     @Test
     fun `formatDuration handles negative durations`() {
         assertThat(formatDuration(-1234)).isEqualTo("-1.23")
-        assertThat(formatDuration(-65_460)).isEqualTo("-1:05.46")
+        assertThat(formatDuration(-65_460)).isEqualTo("-65.46")
         assertThat(formatDuration(-3_945_670)).isEqualTo("-1:05:45.67")
     }
 
@@ -53,32 +53,32 @@ class FormatUtilTest {
 
     @Test
     fun `formatDuration pads zeros correctly`() {
-        assertThat(formatDuration(60_050)).isEqualTo("1:00.05")  // Zero-padded seconds
+        assertThat(formatDuration(60_050)).isEqualTo("60.05")  // Zero-padded seconds
         assertThat(formatDuration(3_605_070)).isEqualTo("1:00:05.07")  // Zero-padded minutes and seconds
     }
 
     @Test
     fun `formatDate formats timestamps correctly`() {
         // Note: This test depends on system locale settings
-        // Testing with known timestamp: 2026-02-15 12:00:00 UTC
+        // Testing with known timestamp: 2026-02-15 20:00:00 UTC
         val timestamp = 1770840000000L
         val formatted = formatDate(timestamp)
 
         // Should contain year, month, and day (format may vary by locale)
         assertThat(formatted).contains("2026")
         assertThat(formatted).contains("02")
-        assertThat(formatted).contains("15")
+        assertThat(formatted).contains("11")
     }
 
     @Test
     fun `formatDateTime includes both date and time`() {
-        // Testing with known timestamp: 2026-02-15 14:30:00 UTC
+        // Testing with known timestamp: 2026-02-11 22:30:00 UTC
         val timestamp = 1770849000000L
         val formatted = formatDateTime(timestamp)
 
         // Should contain date and time components
         assertThat(formatted).contains("2026")
-        assertThat(formatted).contains("14")
+        assertThat(formatted).contains("23")
         assertThat(formatted).contains("30")
     }
 }

@@ -59,8 +59,10 @@ class ResultsScreenTest {
 
         // Recreate ViewModel with data
         viewModel = TrainingViewModel(
-            mockk(relaxed = true), mockk(relaxed = true),
-            trainingRepository, mockk(relaxed = true)
+            athleteRepository = mockk(relaxed = true),
+            runRepository = mockk(relaxed = true),
+            trainingRepository = trainingRepository,
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {
@@ -97,8 +99,10 @@ class ResultsScreenTest {
 
         // Recreate ViewModel with data
         viewModel = TrainingViewModel(
-            mockk(relaxed = true), mockk(relaxed = true),
-            trainingRepository, mockk(relaxed = true)
+            athleteRepository = mockk(relaxed = true),
+            runRepository = mockk(relaxed = true),
+            trainingRepository = trainingRepository,
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {
@@ -142,8 +146,10 @@ class ResultsScreenTest {
 
         // Recreate ViewModel with data
         viewModel = TrainingViewModel(
-            mockk(relaxed = true), mockk(relaxed = true),
-            trainingRepository, mockk(relaxed = true)
+            athleteRepository = mockk(relaxed = true),
+            runRepository = mockk(relaxed = true),
+            trainingRepository = trainingRepository,
+            groupRepository = mockk(relaxed = true)
         )
 
         composeTestRule.setContent {
