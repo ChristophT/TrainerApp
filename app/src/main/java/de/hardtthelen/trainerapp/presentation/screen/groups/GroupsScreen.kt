@@ -270,9 +270,9 @@ private fun GroupItem(
                                     .padding(vertical = 4.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (isMember) {
-                                        MaterialTheme.colorScheme.primaryContainer
+                                        MaterialTheme.colorScheme.primary
                                     } else {
-                                        MaterialTheme.colorScheme.secondaryContainer
+                                        MaterialTheme.colorScheme.tertiary
                                     }
                                 )
                             ) {
