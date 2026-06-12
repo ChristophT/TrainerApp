@@ -50,6 +50,13 @@
     <string name="delete_session">Delete session</string>
     <string name="delete_session_confirm">Delete this training session?</string>
 
+    <!-- Delete Confirmation General -->
+    <string name="delete_athlete">Delete athlete</string>
+    <string name="delete_athlete_confirm">Delete athlete \"%s\"? All their runs will be deleted as well.</string>
+    <string name="delete_group">Delete group</string>
+    <string name="delete_group_confirm">Delete group \"%s\"?</string>
+    <string name="delete_session_message">Delete session \"%s\"?</string>
+
     <!-- Athlete Run Card -->
     <string name="last_run">Last: %s</string>
     <string name="add_note_hint">Add note…</string>

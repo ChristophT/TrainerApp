@@ -15,7 +15,8 @@ import de.hardtthelen.trainerapp.R
 
 @Composable
 fun DeleteConfirmationDialog(
-    sessionName: String,
+    title: String,
+    message: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -28,8 +29,8 @@ fun DeleteConfirmationDialog(
                 tint = MaterialTheme.colorScheme.error
             )
         },
-        title = { Text(stringResource(R.string.delete_session)) },
-        text  = { Text(sessionName + "\n" + stringResource(R.string.delete_session_confirm)) },
+        title = { Text(title) },
+        text  = { Text(message) },
         confirmButton = {
             Button(
                 onClick = onConfirm,

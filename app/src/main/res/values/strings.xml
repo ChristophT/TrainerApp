@@ -50,6 +50,13 @@
     <string name="delete_session">Einheit löschen</string>
     <string name="delete_session_confirm">Soll diese Trainingseinheit gelöscht werden?</string>
 
+    <!-- Delete Confirmation General -->
+    <string name="delete_athlete">Athlet löschen</string>
+    <string name="delete_athlete_confirm">Soll der Athlet \"%s\" gelöscht werden? Alle seine Läufe werden ebenfalls gelöscht.</string>
+    <string name="delete_group">Gruppe löschen</string>
+    <string name="delete_group_confirm">Soll die Gruppe \"%s\" gelöscht werden?</string>
+    <string name="delete_session_message">Soll die Einheit \"%s\" gelöscht werden?</string>
+
     <!-- Athlete Run Card -->
     <string name="last_run">Letzter: %s</string>
     <string name="add_note_hint">Notiz hinzufügen…</string>
