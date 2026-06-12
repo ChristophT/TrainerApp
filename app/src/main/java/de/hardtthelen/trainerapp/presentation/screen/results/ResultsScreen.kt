@@ -1,5 +1,6 @@
 package de.hardtthelen.trainerapp.presentation.screen.results
 
+import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -81,36 +82,6 @@ fun ResultsScreen(
             }
         }
 
-        // Export button (when athlete selected)
-        selectedAthleteId?.let { athleteId ->
-            val athlete = athletes.find { it.id == athleteId }
-            val athleteRuns by viewModel.getRunsForAthlete(athleteId).collectAsStateWithLifecycle()
-
-            if (athlete != null) {
-                Button(
-                    onClick = {
-                        CSVExporter.exportAndShare(
-                            context = context,
-                            athlete = athlete,
-                            runs = athleteRuns,
-                            trainings = trainings
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Download,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.export_csv))
-                }
-            }
-        }
-
         // Training list
         if (sortedTrainings.isEmpty()) {
             Box(
@@ -158,7 +129,8 @@ fun ResultsScreen(
                         },
                         onDelete = {
                             viewModel.deleteFinishedTrainingSession(it)
-                        }
+                        },
+                        context
                     )
                 }
             }
@@ -174,6 +146,7 @@ private fun TrainingResultItem(
     isExpanded: Boolean,
     onToggleExpand: () -> Unit,
     onDelete: (TrainingId) -> Unit,
+    context: Context,
     modifier: Modifier = Modifier
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -305,6 +278,28 @@ private fun TrainingResultItem(
                                 }
                             }
                         }
+                        Button(
+                            onClick = {
+                                CSVExporter.exportAndShare(
+                                    context = context,
+                                    athletes = athletes,
+                                    runs = runs,
+                                    training = training
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.export_csv))
+                        }
+
                     }
                 }
             }

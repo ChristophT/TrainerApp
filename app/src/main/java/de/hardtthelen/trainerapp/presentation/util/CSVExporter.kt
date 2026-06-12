@@ -7,6 +7,8 @@ import de.hardtthelen.trainerapp.domain.model.Athlete
 import de.hardtthelen.trainerapp.domain.model.Run
 import de.hardtthelen.trainerapp.domain.model.Training
 import java.io.File
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Exports athlete training data to CSV format.
@@ -14,60 +16,63 @@ import java.io.File
 object CSVExporter {
 
     /**
-     * Generates a CSV string for a specific athlete's runs.
+     * Generates a CSV string for a specific session's runs.
      *
      * CSV Format:
-     * Date,Training,Duration,Note
+     * Date,Training description,Athlete name,Duration,Note
      *
-     * @param athlete The athlete whose data to export
-     * @param runs List of runs for the athlete
-     * @param trainings List of all trainings to get training descriptions
+     * @param runs      List of runs for the session
+     * @param athletes  List of all athletes participating in the runs
+     * @param training  the training session to export
      * @return CSV string
      */
-    fun generateAthleteCSV(
-        athlete: Athlete,
+    fun generateSessionCSV(
         runs: List<Run>,
-        trainings: List<Training>
+        athletes: List<Athlete>,
+        training: Training
     ): String {
-        val trainingMap = trainings.associateBy { it.id }
         val sb = StringBuilder()
+        val athleteMap = athletes.associateBy { it.id }
 
         // Header
-        sb.appendLine("Date,Training,Duration,Note")
+        sb.appendLine("Date,Training,Athlete,Duration,Note")
 
         // Data rows (sorted by date, newest first)
         runs
             .filter { it.durationMs != null }
             .sortedByDescending { it.startedAt }
             .forEach { run ->
-                val training = trainingMap[run.trainingId]
                 val date = formatDate(run.startedAt)
-                val trainingDesc = training?.description ?: "Unknown"
+                val trainingDesc = training.description
+                val athleteName = athleteMap[run.athleteId]?.name ?: "Unknown athlete"
                 val duration = formatDuration(run.durationMs!!)
                 val note = run.note.replace("\"", "\"\"") // Escape quotes
 
-                sb.appendLine("\"$date\",\"$trainingDesc\",\"$duration\",\"$note\"")
+                sb.appendLine("\"$date\",\"$trainingDesc\",\"$athleteName\",\"$duration\",\"$note\"")
             }
 
         return sb.toString()
     }
 
     /**
-     * Exports athlete data to CSV and shares it via Android share sheet.
+     * Exports session data to CSV and shares it via Android share sheet.
      *
      * @param context Android context
-     * @param athlete The athlete whose data to export
-     * @param runs List of runs for the athlete
-     * @param trainings List of all trainings
+     * @param runs List of runs for the session
+     * @param athletes  List of all athletes participating in the runs
+     * @param training The exported training session
      */
+    @OptIn(ExperimentalTime::class)
     fun exportAndShare(
         context: Context,
-        athlete: Athlete,
         runs: List<Run>,
-        trainings: List<Training>
+        athletes: List<Athlete>,
+        training: Training
     ) {
-        val csv = generateAthleteCSV(athlete, runs, trainings)
-        val fileName = "${athlete.name.replace(" ", "_")}_results.csv"
+        val trainingDate = Instant.fromEpochMilliseconds(training.date)
+        val trainingDateString = trainingDate.toString()
+        val csv = generateSessionCSV(runs, athletes, training)
+        val fileName = "${trainingDateString}_${training.description.replace(" ", "_")}_results.csv"
 
         // Write to cache directory
         val file = File(context.cacheDir, fileName)
@@ -84,7 +89,7 @@ object CSVExporter {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/csv"
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_SUBJECT, "Training Results - ${athlete.name}")
+            putExtra(Intent.EXTRA_SUBJECT, "Training Results - ${training.description}")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
