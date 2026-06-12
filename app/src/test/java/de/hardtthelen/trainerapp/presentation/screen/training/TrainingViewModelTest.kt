@@ -6,6 +6,7 @@ import de.hardtthelen.trainerapp.domain.model.Athlete
 import de.hardtthelen.trainerapp.domain.model.AthleteId
 import de.hardtthelen.trainerapp.domain.model.TrainingGroup
 import de.hardtthelen.trainerapp.domain.model.TrainingGroupId
+import de.hardtthelen.trainerapp.domain.model.TrainingId
 import de.hardtthelen.trainerapp.domain.repository.AthleteRepository
 import de.hardtthelen.trainerapp.domain.repository.GroupRepository
 import de.hardtthelen.trainerapp.domain.repository.RunRepository
@@ -352,6 +353,30 @@ class TrainingViewModelTest {
         viewModel.activeRuns.test {
             val activeRuns = awaitItem()
             assertThat(activeRuns[0].note).isEqualTo(note)
+        }
+    }
+
+    @Test
+    fun `deleteGroup calls repository`() = runTest {
+        val groupId = TrainingGroupId.newId()
+
+        viewModel.deleteGroup(groupId)
+        advanceUntilIdle()
+
+        coVerify {
+            groupRepository.deleteGroup(groupId)
+        }
+    }
+
+    @Test
+    fun `deleteFinishedTrainingSession calls repository`() = runTest {
+        val trainingId = TrainingId.newId()
+
+        viewModel.deleteFinishedTrainingSession(trainingId)
+        advanceUntilIdle()
+
+        coVerify {
+            trainingRepository.deleteTraining(trainingId)
         }
     }
 }

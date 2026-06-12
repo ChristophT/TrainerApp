@@ -158,8 +158,7 @@ fun ResultsScreen(
                         },
                         onDelete = {
                             viewModel.deleteFinishedTrainingSession(it)
-                        },
-                        viewModel
+                        }
                     )
                 }
             }
@@ -175,7 +174,6 @@ private fun TrainingResultItem(
     isExpanded: Boolean,
     onToggleExpand: () -> Unit,
     onDelete: (TrainingId) -> Unit,
-    viewModel: TrainingViewModel,
     modifier: Modifier = Modifier
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -229,7 +227,8 @@ private fun TrainingResultItem(
 
                     if (showDeleteDialog) {
                         DeleteConfirmationDialog(
-                            sessionName = training.description,
+                            title = stringResource(R.string.delete_session),
+                            message = stringResource(R.string.delete_session_message, training.description),
                             onConfirm = {
                                 showDeleteDialog = false
                                 onDelete(training.id)

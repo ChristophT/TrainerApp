@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.hardtthelen.trainerapp.R
 import de.hardtthelen.trainerapp.domain.model.Athlete
 import de.hardtthelen.trainerapp.domain.model.AthleteId
+import de.hardtthelen.trainerapp.presentation.screen.results.DeleteConfirmationDialog
 import de.hardtthelen.trainerapp.presentation.screen.training.TrainingViewModel
 
 @Composable
@@ -27,6 +28,7 @@ fun AthletesScreen(
     var newAthleteName by remember { mutableStateOf("") }
     var editingAthleteId by remember { mutableStateOf<AthleteId?>(null) }
     var editName by remember { mutableStateOf("") }
+    var athleteToDelete by remember { mutableStateOf<Athlete?>(null) }
 
     Column(
         modifier = modifier
@@ -109,10 +111,23 @@ fun AthletesScreen(
                             }
                         },
                         onCancelEdit = { editingAthleteId = null },
-                        onDelete = { viewModel.deleteAthlete(athlete.id) }
+                        onDelete = { athleteToDelete = athlete }
                     )
                 }
             }
+        }
+
+        // Delete confirmation
+        athleteToDelete?.let { athlete ->
+            DeleteConfirmationDialog(
+                title = stringResource(R.string.delete_athlete),
+                message = stringResource(R.string.delete_athlete_confirm, athlete.name),
+                onConfirm = {
+                    viewModel.deleteAthlete(athlete.id)
+                    athleteToDelete = null
+                },
+                onDismiss = { athleteToDelete = null }
+            )
         }
     }
 }

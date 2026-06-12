@@ -20,6 +20,7 @@ import de.hardtthelen.trainerapp.domain.model.Athlete
 import de.hardtthelen.trainerapp.domain.model.AthleteId
 import de.hardtthelen.trainerapp.domain.model.TrainingGroup
 import de.hardtthelen.trainerapp.domain.model.TrainingGroupId
+import de.hardtthelen.trainerapp.presentation.screen.results.DeleteConfirmationDialog
 import de.hardtthelen.trainerapp.presentation.screen.training.TrainingViewModel
 
 @Composable
@@ -33,6 +34,7 @@ fun GroupsScreen(
     var editingGroupId by remember { mutableStateOf<TrainingGroupId?>(null) }
     var editName by remember { mutableStateOf("") }
     var expandedGroupId by remember { mutableStateOf<TrainingGroupId?>(null) }
+    var groupToDelete by remember { mutableStateOf<TrainingGroup?>(null) }
 
     Column(
         modifier = modifier
@@ -120,13 +122,26 @@ fun GroupsScreen(
                             }
                         },
                         onCancelEdit = { editingGroupId = null },
-                        onDelete = { viewModel.deleteGroup(group.id) },
+                        onDelete = { groupToDelete = group },
                         onToggleMember = { athleteId ->
                             viewModel.toggleGroupMember(group.id, athleteId)
                         }
                     )
                 }
             }
+        }
+
+        // Delete confirmation
+        groupToDelete?.let { group ->
+            DeleteConfirmationDialog(
+                title = stringResource(R.string.delete_group),
+                message = stringResource(R.string.delete_group_confirm, group.name),
+                onConfirm = {
+                    viewModel.deleteGroup(group.id)
+                    groupToDelete = null
+                },
+                onDismiss = { groupToDelete = null }
+            )
         }
     }
 }

@@ -210,6 +210,48 @@ class AthletesScreenTest {
     }
 
     @Test
+    fun athletesScreen_confirmDelete_callsViewModel() {
+        // Setup with one athlete
+        val athleteId = AthleteId("1")
+        val athletes = listOf(Athlete(athleteId, "John Doe"))
+        coEvery { athleteRepository.getAllAthletes() } returns flowOf(athletes)
+
+        viewModel = TrainingViewModel(
+            athleteRepository, mockk(relaxed = true),
+            mockk(relaxed = true), mockk(relaxed = true)
+        )
+
+        composeTestRule.setContent {
+            TrainerAppTheme {
+                AthletesScreen(viewModel = viewModel)
+            }
+        }
+
+        // Click delete icon
+        composeTestRule
+            .onNodeWithContentDescription("Delete")
+            .performClick()
+
+        // Verify dialog shown
+        composeTestRule
+            .onNodeWithText("Delete athlete")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Delete athlete \"John Doe\"?", substring = true)
+            .assertIsDisplayed()
+
+        // Click confirm Delete in dialog
+        composeTestRule
+            .onAllNodesWithText("Delete")
+            .filterToOne(hasClickAction())
+            .performClick()
+
+        // Verify repository called
+        coVerify { athleteRepository.deleteAthlete(athleteId) }
+    }
+
+    @Test
     fun athletesScreen_title_isDisplayed() {
         composeTestRule.setContent {
             TrainerAppTheme {
