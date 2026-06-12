@@ -58,7 +58,7 @@ fun formatDuration(durationMs: Long): String {
  */
 fun formatDate(timestampMs: Long): String {
     val date = java.util.Date(timestampMs)
-    val format = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
+    val format = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.GERMAN)
     return format.format(date)
 }
 
@@ -70,6 +70,6 @@ fun formatDate(timestampMs: Long): String {
  */
 fun formatDateTime(timestampMs: Long): String {
     val date = java.util.Date(timestampMs)
-    val format = java.text.SimpleDateFormat("dd.MM.yyyy HH:mm", java.util.Locale.getDefault())
+    val format = java.text.SimpleDateFormat("dd.MM.yyyy HH:mm", java.util.Locale.GERMAN)
     return format.format(date)
 }

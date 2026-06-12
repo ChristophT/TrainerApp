@@ -54,8 +54,10 @@ class GroupsScreenTest {
 
         // Recreate ViewModel with data
         viewModel = TrainingViewModel(
-            mockk(relaxed = true), mockk(relaxed = true),
-            mockk(relaxed = true), groupRepository
+            athleteRepository = mockk(relaxed = true),
+            runRepository = mockk(relaxed = true),
+            trainingRepository = mockk(relaxed = true),
+            groupRepository = groupRepository
         )
 
         composeTestRule.setContent {
