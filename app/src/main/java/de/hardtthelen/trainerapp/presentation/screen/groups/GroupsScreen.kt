@@ -23,6 +23,9 @@ import de.hardtthelen.trainerapp.domain.model.TrainingGroupId
 import de.hardtthelen.trainerapp.presentation.screen.results.DeleteConfirmationDialog
 import de.hardtthelen.trainerapp.presentation.screen.training.TrainingViewModel
 
+import androidx.compose.ui.tooling.preview.Preview
+import java.util.UUID
+
 @Composable
 fun GroupsScreen(
     modifier: Modifier = Modifier,
@@ -30,6 +33,28 @@ fun GroupsScreen(
 ) {
     val groups by viewModel.groups.collectAsStateWithLifecycle()
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
+
+    GroupsContent(
+        groups = groups,
+        athletes = athletes,
+        onAddGroup = viewModel::addGroup,
+        onUpdateGroup = viewModel::updateGroup,
+        onDeleteGroup = viewModel::deleteGroup,
+        onToggleGroupMember = viewModel::toggleGroupMember,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun GroupsContent(
+    groups: List<TrainingGroup>,
+    athletes: List<Athlete>,
+    onAddGroup: (String) -> Unit,
+    onUpdateGroup: (TrainingGroupId, String) -> Unit,
+    onDeleteGroup: (TrainingGroupId) -> Unit,
+    onToggleGroupMember: (TrainingGroupId, AthleteId) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var newGroupName by remember { mutableStateOf("") }
     var editingGroupId by remember { mutableStateOf<TrainingGroupId?>(null) }
     var editName by remember { mutableStateOf("") }
@@ -66,7 +91,7 @@ fun GroupsScreen(
             IconButton(
                 onClick = {
                     if (newGroupName.isNotBlank()) {
-                        viewModel.addGroup(newGroupName.trim())
+                        onAddGroup(newGroupName.trim())
                         newGroupName = ""
                     }
                 },
@@ -117,14 +142,14 @@ fun GroupsScreen(
                         },
                         onSaveEdit = {
                             if (editName.isNotBlank()) {
-                                viewModel.updateGroup(group.id, editName.trim())
+                                onUpdateGroup(group.id, editName.trim())
                                 editingGroupId = null
                             }
                         },
                         onCancelEdit = { editingGroupId = null },
                         onDelete = { groupToDelete = group },
                         onToggleMember = { athleteId ->
-                            viewModel.toggleGroupMember(group.id, athleteId)
+                            onToggleGroupMember(group.id, athleteId)
                         }
                     )
                 }
@@ -137,7 +162,7 @@ fun GroupsScreen(
                 title = stringResource(R.string.delete_group),
                 message = stringResource(R.string.delete_group_confirm, group.name),
                 onConfirm = {
-                    viewModel.deleteGroup(group.id)
+                    onDeleteGroup(group.id)
                     groupToDelete = null
                 },
                 onDismiss = { groupToDelete = null }
@@ -145,6 +170,36 @@ fun GroupsScreen(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun GroupsScreenPreview() {
+    val athlete1 = Athlete(id = AthleteId(UUID.randomUUID().toString()), name = "Max Mustermann")
+    val athlete2 = Athlete(id = AthleteId(UUID.randomUUID().toString()), name = "Erika Mustermann")
+
+    MaterialTheme {
+        GroupsContent(
+            groups = listOf(
+                TrainingGroup(
+                    id = TrainingGroupId(UUID.randomUUID().toString()),
+                    name = "Gruppe A",
+                    memberIds = listOf(athlete1.id)
+                ),
+                TrainingGroup(
+                    id = TrainingGroupId(UUID.randomUUID().toString()),
+                    name = "Gruppe B",
+                    memberIds = listOf(athlete1.id, athlete2.id)
+                )
+            ),
+            athletes = listOf(athlete1, athlete2),
+            onAddGroup = {},
+            onUpdateGroup = { _, _ -> },
+            onDeleteGroup = {},
+            onToggleGroupMember = { _, _ -> }
+        )
+    }
+}
+
 
 @Composable
 private fun GroupItem(
