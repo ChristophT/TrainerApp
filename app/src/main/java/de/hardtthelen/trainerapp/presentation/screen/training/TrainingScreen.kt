@@ -18,6 +18,10 @@ import de.hardtthelen.trainerapp.R
 import de.hardtthelen.trainerapp.presentation.component.AthleteRunCard
 import de.hardtthelen.trainerapp.presentation.util.formatDate
 
+import androidx.compose.ui.tooling.preview.Preview
+import de.hardtthelen.trainerapp.domain.model.*
+import java.util.UUID
+
 @Composable
 fun TrainingScreen(
     modifier: Modifier = Modifier,
@@ -29,15 +33,48 @@ fun TrainingScreen(
     val elapsedTimes by viewModel.currentElapsedTimes.collectAsStateWithLifecycle()
     val completedRunsByAthlete by viewModel.completedRunsByAthlete.collectAsStateWithLifecycle()
 
+    TrainingContent(
+        currentTraining = currentTraining,
+        athletes = athletes,
+        groups = groups,
+        elapsedTimes = elapsedTimes,
+        completedRunsByAthlete = completedRunsByAthlete,
+        isAthleteActive = { athleteId -> viewModel.getActiveRun(athleteId) != null },
+        onStartTraining = viewModel::startTraining,
+        onEndTraining = viewModel::endTraining,
+        onStartRun = viewModel::startRun,
+        onStopRun = viewModel::stopRun,
+        onUpdateRunNote = viewModel::updateRunNote,
+        onAddParticipant = viewModel::addParticipant,
+        onAddGroupToTraining = viewModel::addGroupToTraining,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun TrainingContent(
+    currentTraining: Training?,
+    athletes: List<Athlete>,
+    groups: List<TrainingGroup>,
+    elapsedTimes: Map<AthleteId, Long>,
+    completedRunsByAthlete: Map<AthleteId, List<Run>>,
+    isAthleteActive: (AthleteId) -> Boolean,
+    onStartTraining: (String) -> Unit,
+    onEndTraining: () -> Unit,
+    onStartRun: (AthleteId) -> Unit,
+    onStopRun: (AthleteId) -> Unit,
+    onUpdateRunNote: (RunId, String) -> Unit,
+    onAddParticipant: (AthleteId) -> Unit,
+    onAddGroupToTraining: (TrainingGroupId) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var description by remember { mutableStateOf("") }
     var showAddAthlete by remember { mutableStateOf(false) }
     var showAddGroup by remember { mutableStateOf(false) }
 
-    // Create local immutable variables
-    val training = currentTraining
     val altDesc = stringResource(R.string.training_default_description)
 
-    if (training == null) {
+    if (currentTraining == null) {
         // No active session - show start screen
         Box(
             modifier = modifier.fillMaxSize(),
@@ -70,10 +107,8 @@ fun TrainingScreen(
 
                 Button(
                     onClick = {
-                        val desc = description.ifBlank {
-                            altDesc
-                        }
-                        viewModel.startTraining(desc)
+                        val desc = description.ifBlank { altDesc }
+                        onStartTraining(desc)
                         description = ""
                     },
                     modifier = Modifier
@@ -90,10 +125,10 @@ fun TrainingScreen(
     } else {
         // Active session
         val participants = athletes.filter { athlete ->
-            training.participantIds.contains(athlete.id)
+            currentTraining.participantIds.contains(athlete.id)
         }
         val nonParticipants = athletes.filter { athlete ->
-            !training.participantIds.contains(athlete.id)
+            !currentTraining.participantIds.contains(athlete.id)
         }
 
         Column(
@@ -111,11 +146,11 @@ fun TrainingScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = training.description,
+                        text = currentTraining.description,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-                        text = "${formatDate(training.date)} · ${
+                        text = "${formatDate(currentTraining.date)} · ${
                             stringResource(
                                 if (participants.size == 1) R.string.athlete_count else R.string.athletes_count,
                                 participants.size
@@ -126,7 +161,7 @@ fun TrainingScreen(
                     )
                 }
                 Button(
-                    onClick = { viewModel.endTraining() },
+                    onClick = onEndTraining,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -174,19 +209,19 @@ fun TrainingScreen(
                 }
 
                 items(participants, key = { it.id }) { athlete ->
-                    val activeRun = viewModel.getActiveRun(athlete.id)
+                    val isActive = isAthleteActive(athlete.id)
                     val lastRun = completedRunsByAthlete[athlete.id]?.firstOrNull()
 
                     AthleteRunCard(
                         athleteName = athlete.name,
                         elapsedMs = elapsedTimes[athlete.id],
-                        isActive = activeRun != null,
+                        isActive = isActive,
                         lastRun = lastRun,
-                        onStartRun = { viewModel.startRun(athlete.id) },
-                        onStopRun = { viewModel.stopRun(athlete.id) },
+                        onStartRun = { onStartRun(athlete.id) },
+                        onStopRun = { onStopRun(athlete.id) },
                         onUpdateNote = { note ->
                             lastRun?.let { run ->
-                                viewModel.updateRunNote(run.id, note)
+                                onUpdateRunNote(run.id, note)
                             }
                         }
                     )
@@ -266,7 +301,7 @@ fun TrainingScreen(
                                     nonParticipants.forEach { athlete ->
                                         Button(
                                             onClick = {
-                                                viewModel.addParticipant(athlete.id)
+                                                onAddParticipant(athlete.id)
                                             },
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
@@ -307,7 +342,7 @@ fun TrainingScreen(
                                 groups.forEach { group ->
                                     Button(
                                         onClick = {
-                                            viewModel.addGroupToTraining(group.id)
+                                            onAddGroupToTraining(group.id)
                                             showAddGroup = false
                                         },
                                         modifier = Modifier.fillMaxWidth()
@@ -335,3 +370,60 @@ fun TrainingScreen(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun TrainingScreenEmptyPreview() {
+    MaterialTheme {
+        TrainingContent(
+            currentTraining = null,
+            athletes = emptyList(),
+            groups = emptyList(),
+            elapsedTimes = emptyMap(),
+            completedRunsByAthlete = emptyMap(),
+            isAthleteActive = { false },
+            onStartTraining = {},
+            onEndTraining = {},
+            onStartRun = {},
+            onStopRun = {},
+            onUpdateRunNote = { _, _ -> },
+            onAddParticipant = {},
+            onAddGroupToTraining = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TrainingScreenActivePreview() {
+    val athlete1 = Athlete(id = AthleteId(UUID.randomUUID().toString()), name = "Max Mustermann")
+    val athlete2 = Athlete(id = AthleteId(UUID.randomUUID().toString()), name = "Erika Mustermann")
+    val trainingId = TrainingId(UUID.randomUUID().toString())
+    
+    val training = Training(
+        id = trainingId,
+        date = System.currentTimeMillis(),
+        description = "Sprints",
+        participantIds = listOf(athlete1.id, athlete2.id),
+        runIds = emptyList()
+    )
+
+    MaterialTheme {
+        TrainingContent(
+            currentTraining = training,
+            athletes = listOf(athlete1, athlete2),
+            groups = emptyList(),
+            elapsedTimes = mapOf(athlete1.id to 45200L),
+            completedRunsByAthlete = emptyMap(),
+            isAthleteActive = { it == athlete1.id },
+            onStartTraining = {},
+            onEndTraining = {},
+            onStartRun = {},
+            onStopRun = {},
+            onUpdateRunNote = { _, _ -> },
+            onAddParticipant = {},
+            onAddGroupToTraining = {}
+        )
+    }
+}
+

@@ -1,17 +1,39 @@
 package de.hardtthelen.trainerapp.presentation.component
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Square
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import de.hardtthelen.trainerapp.R
 import de.hardtthelen.trainerapp.domain.model.Run
 import de.hardtthelen.trainerapp.presentation.util.formatDuration
@@ -65,27 +87,76 @@ fun AthleteRunCard(
             ) {
                 // Athlete name and last run info
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = athleteName,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                     )
-                    if (lastRun != null && lastRun.durationMs != null) {
+
+                    if (showNoteInput) {
+                        OutlinedTextField(
+                            value = noteText,
+                            onValueChange = { noteText = it },
+                            placeholder = {
+                                Text(
+                                    text = stringResource(R.string.add_note_hint),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp, end = 8.dp),
+                            singleLine = true,
+                            textStyle = MaterialTheme.typography.bodySmall,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        onUpdateNote(noteText.trim())
+                                        showNoteInput = false
+                                    },
+                                    modifier = Modifier.size(32.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+                        )
+                    } else if (lastRun != null && lastRun.durationMs != null) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                text = stringResource(R.string.last_run, formatDuration(lastRun.durationMs)),
+                                text = stringResource(
+                                    R.string.last_run,
+                                    formatDuration(lastRun.durationMs)
+                                ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             if (lastRun.note.isNotEmpty()) {
                                 Text(
-                                    text = "📝",
-                                    fontSize = 12.sp
+                                    text = "• ${lastRun.note}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.clickable { showNoteInput = true }
+                                )
+                            } else if (!isActive) {
+                                Text(
+                                    text = stringResource(R.string.add_note),
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        textDecoration = TextDecoration.Underline
+                                    ),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.clickable { showNoteInput = true }
                                 )
                             }
                         }
@@ -106,68 +177,36 @@ fun AthleteRunCard(
                     if (isActive) {
                         Button(
                             onClick = onStopRun,
+                            modifier = Modifier.size(75.dp),
+                            shape = CircleShape,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.error
                             ),
-                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+                            contentPadding = PaddingValues(0.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Square,
-                                contentDescription = stringResource(R.string.stop_run_for, athleteName)
+                                contentDescription = stringResource(R.string.stop_run_for, athleteName),
+                                modifier = Modifier.size(28.dp)
                             )
                         }
                     } else {
                         Button(
                             onClick = onStartRun,
-                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+                            modifier = Modifier.size(75.dp),
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(0.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = stringResource(R.string.start_run_for, athleteName)
+                                contentDescription = stringResource(R.string.start_run_for, athleteName),
+                                modifier = Modifier.size(40.dp)
                             )
                         }
                     }
                 }
             }
 
-            // Note input (shown after stopping a run)
-            if (!isActive && lastRun != null && !showNoteInput) {
-                TextButton(
-                    onClick = { showNoteInput = true },
-                    modifier = Modifier.padding(top = 8.dp)
-                ) {
-                    Text(stringResource(R.string.add_note))
-                }
-            }
-
-            if (showNoteInput) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(
-                        value = noteText,
-                        onValueChange = { noteText = it },
-                        placeholder = { Text(stringResource(R.string.add_note_hint)) },
-                        modifier = Modifier.weight(1f),
-                        singleLine = true
-                    )
-                    Button(
-                        onClick = {
-                            if (noteText.isNotBlank()) {
-                                onUpdateNote(noteText.trim())
-                                noteText = ""
-                                showNoteInput = false
-                            }
-                        }
-                    ) {
-                        Text(stringResource(R.string.save))
-                    }
-                }
-            }
         }
     }
 }

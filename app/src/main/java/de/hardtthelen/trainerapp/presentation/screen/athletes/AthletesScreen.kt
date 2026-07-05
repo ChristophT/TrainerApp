@@ -19,12 +19,33 @@ import de.hardtthelen.trainerapp.domain.model.AthleteId
 import de.hardtthelen.trainerapp.presentation.screen.results.DeleteConfirmationDialog
 import de.hardtthelen.trainerapp.presentation.screen.training.TrainingViewModel
 
+import androidx.compose.ui.tooling.preview.Preview
+import java.util.UUID
+
 @Composable
 fun AthletesScreen(
     modifier: Modifier = Modifier,
     viewModel: TrainingViewModel = hiltViewModel(),
 ) {
     val athletes by viewModel.athletes.collectAsStateWithLifecycle()
+
+    AthletesContent(
+        athletes = athletes,
+        onAddAthlete = viewModel::addAthlete,
+        onUpdateAthlete = viewModel::updateAthlete,
+        onDeleteAthlete = viewModel::deleteAthlete,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun AthletesContent(
+    athletes: List<Athlete>,
+    onAddAthlete: (String) -> Unit,
+    onUpdateAthlete: (AthleteId, String) -> Unit,
+    onDeleteAthlete: (AthleteId) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var newAthleteName by remember { mutableStateOf("") }
     var editingAthleteId by remember { mutableStateOf<AthleteId?>(null) }
     var editName by remember { mutableStateOf("") }
@@ -60,7 +81,7 @@ fun AthletesScreen(
             IconButton(
                 onClick = {
                     if (newAthleteName.isNotBlank()) {
-                        viewModel.addAthlete(newAthleteName.trim())
+                        onAddAthlete(newAthleteName.trim())
                         newAthleteName = ""
                     }
                 },
@@ -106,7 +127,7 @@ fun AthletesScreen(
                         },
                         onSaveEdit = {
                             if (editName.isNotBlank()) {
-                                viewModel.updateAthlete(athlete.id, editName.trim())
+                                onUpdateAthlete(athlete.id, editName.trim())
                                 editingAthleteId = null
                             }
                         },
@@ -123,7 +144,7 @@ fun AthletesScreen(
                 title = stringResource(R.string.delete_athlete),
                 message = stringResource(R.string.delete_athlete_confirm, athlete.name),
                 onConfirm = {
-                    viewModel.deleteAthlete(athlete.id)
+                    onDeleteAthlete(athlete.id)
                     athleteToDelete = null
                 },
                 onDismiss = { athleteToDelete = null }
@@ -131,6 +152,23 @@ fun AthletesScreen(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun AthletesScreenPreview() {
+    MaterialTheme {
+        AthletesContent(
+            athletes = listOf(
+                Athlete(id = AthleteId(UUID.randomUUID().toString()), name = "Max Mustermann"),
+                Athlete(id = AthleteId(UUID.randomUUID().toString()), name = "Erika Mustermann")
+            ),
+            onAddAthlete = {},
+            onUpdateAthlete = { _, _ -> },
+            onDeleteAthlete = {}
+        )
+    }
+}
+
 
 @Composable
 private fun AthleteItem(
