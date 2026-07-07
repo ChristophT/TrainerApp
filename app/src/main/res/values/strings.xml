@@ -21,6 +21,7 @@
     <string name="no_athletes_added">Noch keine Athleten hinzugefügt</string>
     <string name="add_athletes_or_group">Füge Athleten oder eine Gruppe hinzu</string>
     <string name="add_athlete">Athlet hinzufügen</string>
+    <string name="enter_athletes">Athleten eintragen</string>
     <string name="add_group">Gruppe hinzufügen</string>
     <string name="all_athletes_added">Alle Athleten bereits hinzugefügt</string>
     <string name="group_with_count">%1$s (%2$d Athleten)</string>

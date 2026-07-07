@@ -1,29 +1,65 @@
 package de.hardtthelen.trainerapp.presentation.screen.training
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.GroupAdd
+import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.StopCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.hardtthelen.trainerapp.R
+import de.hardtthelen.trainerapp.domain.model.Athlete
+import de.hardtthelen.trainerapp.domain.model.AthleteId
+import de.hardtthelen.trainerapp.domain.model.Run
+import de.hardtthelen.trainerapp.domain.model.RunId
+import de.hardtthelen.trainerapp.domain.model.Training
+import de.hardtthelen.trainerapp.domain.model.TrainingGroup
+import de.hardtthelen.trainerapp.domain.model.TrainingGroupId
+import de.hardtthelen.trainerapp.domain.model.TrainingId
 import de.hardtthelen.trainerapp.presentation.component.AthleteRunCard
 import de.hardtthelen.trainerapp.presentation.util.formatDate
-
-import androidx.compose.ui.tooling.preview.Preview
-import de.hardtthelen.trainerapp.domain.model.*
 import java.util.UUID
 
 @Composable
 fun TrainingScreen(
+    onNavigateToAthletes: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TrainingViewModel = hiltViewModel()
 ) {
@@ -47,6 +83,7 @@ fun TrainingScreen(
         onUpdateRunNote = viewModel::updateRunNote,
         onAddParticipant = viewModel::addParticipant,
         onAddGroupToTraining = viewModel::addGroupToTraining,
+        onNavigateToAthletes = onNavigateToAthletes,
         modifier = modifier
     )
 }
@@ -66,6 +103,7 @@ fun TrainingContent(
     onUpdateRunNote: (RunId, String) -> Unit,
     onAddParticipant: (AthleteId) -> Unit,
     onAddGroupToTraining: (TrainingGroupId) -> Unit,
+    onNavigateToAthletes: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var description by remember { mutableStateOf("") }
@@ -235,20 +273,31 @@ fun TrainingContent(
                             .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        OutlinedButton(
-                            onClick = {
-                                showAddAthlete = !showAddAthlete
-                                showAddGroup = false
-                            },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.PersonAdd,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.add_athlete))
+                        if (athletes.isNotEmpty()) {
+                            OutlinedButton(
+                                onClick = {
+                                    showAddAthlete = !showAddAthlete
+                                    showAddGroup = false
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.PersonAdd,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(stringResource(R.string.add_athlete))
+                            }
+                        } else {
+                            OutlinedButton(
+                                onClick = onNavigateToAthletes,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(stringResource(R.string.enter_athletes))
+                            }
+
                         }
 
                         if (groups.isNotEmpty()) {
@@ -388,7 +437,8 @@ fun TrainingScreenEmptyPreview() {
             onStopRun = {},
             onUpdateRunNote = { _, _ -> },
             onAddParticipant = {},
-            onAddGroupToTraining = {}
+            onAddGroupToTraining = {},
+            onNavigateToAthletes = {}
         )
     }
 }
@@ -422,7 +472,8 @@ fun TrainingScreenActivePreview() {
             onStopRun = {},
             onUpdateRunNote = { _, _ -> },
             onAddParticipant = {},
-            onAddGroupToTraining = {}
+            onAddGroupToTraining = {},
+            onNavigateToAthletes = {}
         )
     }
 }
