@@ -21,7 +21,11 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable(NavigationDestinations.Training.route) {
-            TrainingScreen()
+            TrainingScreen(
+                onNavigateToAthletes = {
+                    navController.navigate(NavigationDestinations.Athletes.route)
+                }
+            )
         }
 
         composable(NavigationDestinations.Athletes.route) {
