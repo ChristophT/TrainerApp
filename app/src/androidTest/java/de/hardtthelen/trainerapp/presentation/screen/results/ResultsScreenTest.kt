@@ -2,6 +2,8 @@ package de.hardtthelen.trainerapp.presentation.screen.results
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.platform.app.InstrumentationRegistry
+import de.hardtthelen.trainerapp.R
 import de.hardtthelen.trainerapp.domain.model.Training
 import de.hardtthelen.trainerapp.domain.model.TrainingId
 import de.hardtthelen.trainerapp.domain.repository.AthleteRepository
@@ -25,6 +27,8 @@ class ResultsScreenTest {
 
     private lateinit var viewModel: TrainingViewModel
     private lateinit var trainingRepository: TrainingRepository
+
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
     fun setup() {
@@ -73,15 +77,15 @@ class ResultsScreenTest {
 
         // Find delete button and click it
         composeTestRule
-            .onNodeWithContentDescription("Delete")
+            .onNodeWithContentDescription(context.getString(R.string.cd_delete_button))
             .performClick()
 
         // Verify dialog is shown
         composeTestRule
-            .onNodeWithText("Delete session")
+            .onNodeWithText(context.getString(R.string.delete_session))
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText("Delete session \"Test Session\"?", substring = true)
+            .onNodeWithText(context.getString(R.string.delete_session_message, "Test Session"), substring = true)
             .assertIsDisplayed()
     }
 
@@ -113,14 +117,14 @@ class ResultsScreenTest {
 
         // Open dialog
         composeTestRule
-            .onNodeWithContentDescription("Delete")
+            .onNodeWithContentDescription(context.getString(R.string.cd_delete_button))
             .performClick()
 
         // Click Delete in dialog
         // We use onAllNodesWithText and pick the one that has a click action (the button)
         // or just use onNode with multiple criteria.
         composeTestRule
-            .onAllNodesWithText("Delete")
+            .onAllNodesWithText(context.getString(R.string.delete))
             .filterToOne(hasClickAction())
             .performClick()
 
@@ -129,7 +133,7 @@ class ResultsScreenTest {
 
         // Verify dialog is dismissed
         composeTestRule
-            .onNodeWithText("Delete session")
+            .onNodeWithText(context.getString(R.string.delete_session))
             .assertDoesNotExist()
     }
 
@@ -160,12 +164,12 @@ class ResultsScreenTest {
 
         // Open dialog
         composeTestRule
-            .onNodeWithContentDescription("Delete")
+            .onNodeWithContentDescription(context.getString(R.string.cd_delete_button))
             .performClick()
 
         // Click Cancel in dialog
         composeTestRule
-            .onNodeWithText("Cancel")
+            .onNodeWithText(context.getString(R.string.cancel))
             .performClick()
 
         // Verify Repository was NOT called
@@ -173,7 +177,7 @@ class ResultsScreenTest {
 
         // Verify dialog is dismissed
         composeTestRule
-            .onNodeWithText("Delete session")
+            .onNodeWithText(context.getString(R.string.delete_session))
             .assertDoesNotExist()
     }
 }
