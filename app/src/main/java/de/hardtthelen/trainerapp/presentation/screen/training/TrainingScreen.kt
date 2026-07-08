@@ -109,6 +109,7 @@ fun TrainingContent(
     var description by remember { mutableStateOf("") }
     var showAddAthlete by remember { mutableStateOf(false) }
     var showAddGroup by remember { mutableStateOf(false) }
+    var showEndSessionDialog by remember { mutableStateOf(false) }
 
     val altDesc = stringResource(R.string.training_default_description)
 
@@ -197,21 +198,6 @@ fun TrainingContent(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-                Button(
-                    onClick = onEndTraining,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.StopCircle,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(stringResource(R.string.end_session))
                 }
             }
 
@@ -413,6 +399,35 @@ fun TrainingContent(
                                 }
                             }
                         }
+                    }
+                }
+                item {
+                    Button(
+                        onClick = { showEndSessionDialog = true },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.StopCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.end_session))
+                    }
+
+                    if (showEndSessionDialog) {
+                        EndSessionDialog(
+                            title = stringResource(R.string.end_session),
+                            message = stringResource(R.string.end_session_message),
+                            onConfirm = {
+                                showEndSessionDialog = false
+                                onEndTraining()
+                            },
+                            onDismiss = { showEndSessionDialog = false }
+                        )
                     }
                 }
             }
