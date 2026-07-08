@@ -68,8 +68,20 @@ fun formatDate(timestampMs: Long): String {
  * @param timestampMs Timestamp in milliseconds since epoch
  * @return Formatted date-time string (e.g., "15.02.2026 14:30")
  */
-fun formatDateTime(timestampMs: Long): String {
+fun formatDateTimeForFilename(timestampMs: Long): String {
     val date = java.util.Date(timestampMs)
-    val format = java.text.SimpleDateFormat("dd.MM.yyyy HH:mm", java.util.Locale.GERMAN)
+    val format = java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm", java.util.Locale.GERMAN)
+    return format.format(date)
+}
+
+/**
+ * Formats a timestamp in milliseconds to a time string.
+ *
+ * @param timestampMs Timestamp in milliseconds since epoch
+ * @return Formatted time string (e.g., "09:30")
+ */
+fun formatTime(timestampMs: Long): String {
+    val date = java.util.Date(timestampMs)
+    val format = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.GERMAN)
     return format.format(date)
 }

@@ -28,7 +28,7 @@ class CSVExporterTest {
 
         val csv = CSVExporter.generateSessionCSV(runs, athletes, training)
 
-        assertThat(csv.trim()).isEqualTo("Date,Training,Athlete,Duration,Note")
+        assertThat(csv.trim()).isEqualTo("Date,Training,Start time,Athlete,Duration,Note")
     }
 
     @Test
@@ -66,19 +66,18 @@ class CSVExporterTest {
         
         val lines = csv.lines().filter { it.isNotBlank() }
         assertThat(lines).hasSize(3) // Header + 2 rows
-        assertThat(lines[0]).isEqualTo("Date,Training,Athlete,Duration,Note")
-        
-        // run2 should be first because it started later (2000L > 1000L)
-        // Format: "Date","Training","Athlete","Duration","Note"
-        assertThat(lines[1]).contains("\"Jane Smith\"")
-        assertThat(lines[1]).contains("\"Sprint session\"")
-        assertThat(lines[1]).contains("\"15.00\"")
-        assertThat(lines[1]).contains("\"Slow start\"")
+        assertThat(lines[0]).isEqualTo("Date,Training,Start time,Athlete,Duration,Note")
 
-        assertThat(lines[2]).contains("\"John Doe\"")
+        assertThat(lines[1]).contains("\"John Doe\"")
+        assertThat(lines[1]).contains("\"Sprint session\"")
+        assertThat(lines[1]).contains("\"12.34\"")
+        assertThat(lines[1]).contains("\"Good run\"")
+
+        // run2 should be last because it started later (2000L > 1000L)
+        assertThat(lines[2]).contains("\"Jane Smith\"")
         assertThat(lines[2]).contains("\"Sprint session\"")
-        assertThat(lines[2]).contains("\"12.34\"")
-        assertThat(lines[2]).contains("\"Good run\"")
+        assertThat(lines[2]).contains("\"15.00\"")
+        assertThat(lines[2]).contains("\"Slow start\"")
     }
 
     @Test

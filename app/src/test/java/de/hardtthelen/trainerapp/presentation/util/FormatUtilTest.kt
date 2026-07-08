@@ -71,14 +71,22 @@ class FormatUtilTest {
     }
 
     @Test
-    fun `formatDateTime includes both date and time`() {
+    fun `formatDateTimeForFilename includes both date and time`() {
         // Testing with known timestamp: 2026-02-11 22:30:00 UTC
         val timestamp = 1770849000000L
-        val formatted = formatDateTime(timestamp)
+        val formatted = formatDateTimeForFilename(timestamp)
 
         // Should contain date and time components
-        assertThat(formatted).contains("2026")
-        assertThat(formatted).contains("23")
-        assertThat(formatted).contains("30")
+        assertThat(formatted).isEqualTo("2026-02-11_23-30")
+    }
+
+    @Test
+    fun `formatTime shows time as 24h`() {
+        // Testing with known timestamp: 2026-02-11 22:30:12 UTC
+        val timestamp = 1770849012000L
+        val formatted = formatTime(timestamp)
+
+        // Should display time component
+        assertThat(formatted).isEqualTo("23:30:12")
     }
 }
