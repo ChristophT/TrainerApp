@@ -128,10 +128,7 @@ fun AthleteRunCard(
                             }
                         )
                     } else if (lastRun != null && lastRun.durationMs != null) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
+                        Column {
                             Text(
                                 text = stringResource(
                                     R.string.last_run,
@@ -142,7 +139,7 @@ fun AthleteRunCard(
                             )
                             if (lastRun.note.isNotEmpty()) {
                                 Text(
-                                    text = "• ${lastRun.note}",
+                                    text = lastRun.note,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary,
                                     maxLines = 1,
