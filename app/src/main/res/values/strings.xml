@@ -16,6 +16,8 @@
     <string name="training_default_description">Trainingseinheit</string>
     <string name="start_session">Einheit starten</string>
     <string name="end_session">Beenden</string>
+    <string name="end_session_message">Aktuelle Trainingseinheit beenden?</string>
+    <string name="continue_session">Weitermachen</string>
     <string name="athletes_count">%d Athleten</string>
     <string name="athlete_count">%d Athlet</string>
     <string name="no_athletes_added">Noch keine Athleten hinzugefügt</string>

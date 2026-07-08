@@ -79,4 +79,6 @@
     <string name="cd_delete_button">Delete</string>
     <string name="cd_start_button">Start</string>
     <string name="cd_stop_button">Stop</string>
+    <string name="end_session_message">End current training session?</string>
+    <string name="continue_session">Continue</string>
 </resources>
