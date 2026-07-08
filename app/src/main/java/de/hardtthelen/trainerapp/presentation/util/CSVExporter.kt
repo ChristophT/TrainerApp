@@ -8,7 +8,6 @@ import de.hardtthelen.trainerapp.domain.model.Run
 import de.hardtthelen.trainerapp.domain.model.Training
 import java.io.File
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 /**
  * Exports athlete training data to CSV format.
@@ -35,20 +34,21 @@ object CSVExporter {
         val athleteMap = athletes.associateBy { it.id }
 
         // Header
-        sb.appendLine("Date,Training,Athlete,Duration,Note")
+        sb.appendLine("Date,Training,Start time,Athlete,Duration,Note")
 
         // Data rows (sorted by date, newest first)
         runs
             .filter { it.durationMs != null }
-            .sortedByDescending { it.startedAt }
+            .sortedBy { it.startedAt }
             .forEach { run ->
                 val date = formatDate(run.startedAt)
+                val time = formatTime(run.startedAt)
                 val trainingDesc = training.description
                 val athleteName = athleteMap[run.athleteId]?.name ?: "Unknown athlete"
                 val duration = formatDuration(run.durationMs!!)
                 val note = run.note.replace("\"", "\"\"") // Escape quotes
 
-                sb.appendLine("\"$date\",\"$trainingDesc\",\"$athleteName\",\"$duration\",\"$note\"")
+                sb.appendLine("\"$date\",\"$trainingDesc\",\"$time\",\"$athleteName\",\"$duration\",\"$note\"")
             }
 
         return sb.toString()
@@ -69,8 +69,7 @@ object CSVExporter {
         athletes: List<Athlete>,
         training: Training
     ) {
-        val trainingDate = Instant.fromEpochMilliseconds(training.date)
-        val trainingDateString = trainingDate.toString()
+        val trainingDateString = formatDateTimeForFilename(training.date)
         val csv = generateSessionCSV(runs, athletes, training)
         val fileName = "${trainingDateString}_${training.description.replace(" ", "_")}_results.csv"
 
