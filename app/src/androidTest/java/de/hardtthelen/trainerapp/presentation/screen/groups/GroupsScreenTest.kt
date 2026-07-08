@@ -2,6 +2,8 @@ package de.hardtthelen.trainerapp.presentation.screen.groups
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.platform.app.InstrumentationRegistry
+import de.hardtthelen.trainerapp.R
 import de.hardtthelen.trainerapp.domain.model.TrainingGroup
 import de.hardtthelen.trainerapp.domain.model.TrainingGroupId
 import de.hardtthelen.trainerapp.domain.repository.AthleteRepository
@@ -25,6 +27,8 @@ class GroupsScreenTest {
 
     private lateinit var viewModel: TrainingViewModel
     private lateinit var groupRepository: GroupRepository
+
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
     fun setup() {
@@ -68,21 +72,21 @@ class GroupsScreenTest {
 
         // Click delete icon
         composeTestRule
-            .onNodeWithContentDescription("Delete")
+            .onNodeWithContentDescription(context.getString(R.string.cd_delete_button))
             .performClick()
 
         // Verify dialog shown
         composeTestRule
-            .onNodeWithText("Delete group")
+            .onNodeWithText(context.getString(R.string.delete_group))
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText("Delete group \"Elite Squad\"?", substring = true)
+            .onNodeWithText(context.getString(R.string.delete_group_confirm, "Elite Squad"), substring = true)
             .assertIsDisplayed()
 
         // Click confirm Delete in dialog
         composeTestRule
-            .onAllNodesWithText("Delete")
+            .onAllNodesWithText(context.getString(R.string.delete))
             .filterToOne(hasClickAction())
             .performClick()
 

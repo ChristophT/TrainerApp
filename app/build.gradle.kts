@@ -23,12 +23,16 @@ android {
             useSupportLibrary = true
         }
 
-        // Room schema export
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("room.generateKotlin", "true")
-        }
     }
+}
+
+// Room schema export
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.generateKotlin", "true")
+}
+
+android {
 
     // Load keystore properties if available
 //    val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -83,6 +87,9 @@ android {
     }
 
     packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "META-INF/LICENSE.md"

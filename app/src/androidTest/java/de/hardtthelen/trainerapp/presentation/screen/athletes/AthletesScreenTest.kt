@@ -2,6 +2,8 @@ package de.hardtthelen.trainerapp.presentation.screen.athletes
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.platform.app.InstrumentationRegistry
+import de.hardtthelen.trainerapp.R
 import de.hardtthelen.trainerapp.domain.model.Athlete
 import de.hardtthelen.trainerapp.domain.model.AthleteId
 import de.hardtthelen.trainerapp.domain.repository.AthleteRepository
@@ -36,6 +38,8 @@ class AthletesScreenTest {
     private lateinit var viewModel: TrainingViewModel
     private lateinit var athleteRepository: AthleteRepository
 
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+
     @Before
     fun setup() {
         // Create mock repositories
@@ -67,7 +71,7 @@ class AthletesScreenTest {
         }
 
         composeTestRule
-            .onNodeWithText("No athletes yet. Add one above.", substring = true)
+            .onNodeWithText(context.getString(R.string.no_athletes_yet), substring = true)
             .assertIsDisplayed()
     }
 
@@ -112,7 +116,7 @@ class AthletesScreenTest {
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Add")
+            .onNodeWithContentDescription(context.getString(R.string.cd_add_button))
             .assertIsDisplayed()
     }
 
@@ -126,7 +130,7 @@ class AthletesScreenTest {
 
         // Find and type in input field
         composeTestRule
-            .onNodeWithText("New athlete name")
+            .onNodeWithText(context.getString(R.string.new_athlete_name))
             .performTextInput("Test Athlete")
 
         // Verify text is displayed
@@ -145,12 +149,12 @@ class AthletesScreenTest {
 
         // Type athlete name
         composeTestRule
-            .onNodeWithText("New athlete name")
+            .onNodeWithText(context.getString(R.string.new_athlete_name))
             .performTextInput("New Athlete")
 
         // Click add button
         composeTestRule
-            .onNodeWithContentDescription("Add")
+            .onNodeWithContentDescription(context.getString(R.string.cd_add_button))
             .performClick()
 
         // Verify Repository was called
@@ -178,16 +182,16 @@ class AthletesScreenTest {
 
         // Click edit button
         composeTestRule
-            .onNodeWithContentDescription("Edit")
+            .onNodeWithContentDescription(context.getString(R.string.cd_edit_button))
             .performClick()
 
         // Verify confirm/cancel buttons appear
         composeTestRule
-            .onNodeWithContentDescription("Confirm")
+            .onNodeWithContentDescription(context.getString(R.string.confirm))
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithContentDescription("Cancel")
+            .onNodeWithContentDescription(context.getString(R.string.cancel))
             .assertIsDisplayed()
     }
 
@@ -211,7 +215,7 @@ class AthletesScreenTest {
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Delete")
+            .onNodeWithContentDescription(context.getString(R.string.cd_delete_button))
             .assertIsDisplayed()
     }
 
@@ -237,21 +241,21 @@ class AthletesScreenTest {
 
         // Click delete icon
         composeTestRule
-            .onNodeWithContentDescription("Delete")
+            .onNodeWithContentDescription(context.getString(R.string.cd_delete_button))
             .performClick()
 
         // Verify dialog shown
         composeTestRule
-            .onNodeWithText("Delete athlete")
+            .onNodeWithText(context.getString(R.string.delete_athlete))
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText("Delete athlete \"John Doe\"?", substring = true)
+            .onNodeWithText(context.getString(R.string.delete_athlete_confirm, "John Doe"), substring = true)
             .assertIsDisplayed()
 
         // Click confirm Delete in dialog
         composeTestRule
-            .onAllNodesWithText("Delete")
+            .onAllNodesWithText(context.getString(R.string.delete))
             .filterToOne(hasClickAction())
             .performClick()
 
@@ -268,7 +272,7 @@ class AthletesScreenTest {
         }
 
         composeTestRule
-            .onNodeWithText("Athletes")
+            .onNodeWithText(context.getString(R.string.athletes_title))
             .assertIsDisplayed()
     }
 
