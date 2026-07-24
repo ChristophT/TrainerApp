@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "de.hardtthelen.trainerapp"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "de.hardtthelen.trainerapp"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 4
-        versionName = "1.4"
+        targetSdk = 36
+        versionCode = 5
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
