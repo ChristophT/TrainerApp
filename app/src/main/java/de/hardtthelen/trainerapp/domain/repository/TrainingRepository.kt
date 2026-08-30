@@ -1,8 +1,10 @@
 package de.hardtthelen.trainerapp.domain.repository
 
+import de.hardtthelen.trainerapp.domain.model.Athlete
 import de.hardtthelen.trainerapp.domain.model.AthleteId
 import de.hardtthelen.trainerapp.domain.model.Training
 import de.hardtthelen.trainerapp.domain.model.TrainingId
+import de.hardtthelen.trainerapp.domain.model.TrainingParticipant
 import kotlinx.coroutines.flow.Flow
 
 interface TrainingRepository {
@@ -11,6 +13,6 @@ interface TrainingRepository {
     suspend fun addTraining(training: Training)
     suspend fun updateTraining(training: Training)
     suspend fun deleteTraining(id: TrainingId)
-    suspend fun addParticipant(trainingId: TrainingId, athleteId: AthleteId)
+    suspend fun addParticipant(trainingId: TrainingId, athlete: Athlete): TrainingParticipant
     suspend fun removeParticipant(trainingId: TrainingId, athleteId: AthleteId)
 }

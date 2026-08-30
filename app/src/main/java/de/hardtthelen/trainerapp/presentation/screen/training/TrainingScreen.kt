@@ -53,6 +53,7 @@ import de.hardtthelen.trainerapp.domain.model.Training
 import de.hardtthelen.trainerapp.domain.model.TrainingGroup
 import de.hardtthelen.trainerapp.domain.model.TrainingGroupId
 import de.hardtthelen.trainerapp.domain.model.TrainingId
+import de.hardtthelen.trainerapp.domain.model.TrainingParticipant
 import de.hardtthelen.trainerapp.presentation.component.AthleteRunCard
 import de.hardtthelen.trainerapp.presentation.util.formatDate
 import java.util.UUID
@@ -163,11 +164,9 @@ fun TrainingContent(
         }
     } else {
         // Active session
-        val participants = athletes.filter { athlete ->
-            currentTraining.participantIds.contains(athlete.id)
-        }
+        val participants = currentTraining.participantsByDisplayOrder()
         val nonParticipants = athletes.filter { athlete ->
-            !currentTraining.participantIds.contains(athlete.id)
+            !currentTraining.participantIds().contains(athlete.id)
         }
 
         Column(
@@ -232,7 +231,8 @@ fun TrainingContent(
                     }
                 }
 
-                items(participants, key = { it.id }) { athlete ->
+                items(participants, key = { it.athlete.id }) { participant ->
+                    val athlete = participant.athlete
                     val isActive = isAthleteActive(athlete.id)
                     val lastRun = completedRunsByAthlete[athlete.id]?.firstOrNull()
 
@@ -469,7 +469,8 @@ fun TrainingScreenActivePreview() {
         id = trainingId,
         date = System.currentTimeMillis(),
         description = "Sprints",
-        participantIds = listOf(athlete1.id, athlete2.id),
+        participants = listOf(TrainingParticipant(athlete1, 3),
+            TrainingParticipant(athlete2, 2)),
         runIds = emptyList()
     )
 

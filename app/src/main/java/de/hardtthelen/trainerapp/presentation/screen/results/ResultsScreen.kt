@@ -54,6 +54,7 @@ import de.hardtthelen.trainerapp.domain.model.Run
 import de.hardtthelen.trainerapp.domain.model.RunId
 import de.hardtthelen.trainerapp.domain.model.Training
 import de.hardtthelen.trainerapp.domain.model.TrainingId
+import de.hardtthelen.trainerapp.domain.model.TrainingParticipant
 import de.hardtthelen.trainerapp.presentation.screen.training.TrainingViewModel
 import de.hardtthelen.trainerapp.presentation.util.CSVExporter
 import de.hardtthelen.trainerapp.presentation.util.formatDate
@@ -190,6 +191,7 @@ fun ResultsContent(
 @Composable
 fun ResultsScreenPreview() {
     val athleteId = AthleteId(UUID.randomUUID().toString())
+    val participant = TrainingParticipant(Athlete(athleteId, "Max Mustermann"), 1)
     val trainingId = TrainingId(UUID.randomUUID().toString())
     val runId = RunId(UUID.randomUUID().toString())
 
@@ -201,7 +203,7 @@ fun ResultsScreenPreview() {
                     id = trainingId,
                     date = System.currentTimeMillis(),
                     description = "Waldlauf",
-                    participantIds = listOf(athleteId),
+                    participants = listOf(participant),
                     runIds = listOf(runId)
                 )
             ),

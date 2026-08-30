@@ -39,7 +39,7 @@ class TrainingRepositoryImplTest {
             id = TrainingId("1"),
             date = System.currentTimeMillis(),
             description = "Test Session",
-            participantIds = emptyList(),
+            participants = emptyList(),
             runIds = emptyList()
         )
         repository.addTraining(training)

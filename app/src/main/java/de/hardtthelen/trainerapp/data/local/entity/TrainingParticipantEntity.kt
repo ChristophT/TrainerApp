@@ -30,5 +30,6 @@ import de.hardtthelen.trainerapp.domain.model.TrainingId
 )
 data class TrainingParticipantEntity(
     val trainingId: TrainingId,
-    val athleteId: AthleteId
+    val athleteId: AthleteId,
+    val displayOrder: Int
 )

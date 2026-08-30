@@ -28,7 +28,7 @@ object DatabaseModule {
             TrainerDatabase::class.java,
             TrainerDatabase.DATABASE_NAME
         )
-            .fallbackToDestructiveMigration(false)
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 

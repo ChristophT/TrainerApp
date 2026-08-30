@@ -24,6 +24,9 @@ interface TrainingDao {
     @Query("DELETE FROM trainings WHERE id = :id")
     suspend fun deleteTraining(id: TrainingId)
 
+    @Query("SELECT * FROM training_participants WHERE trainingId = :trainingId")
+    fun getParticipants(trainingId: TrainingId): Flow<List<TrainingParticipantEntity>>
+
     @Query("SELECT athleteId FROM training_participants WHERE trainingId = :trainingId")
     fun getParticipantIds(trainingId: TrainingId): Flow<List<AthleteId>>
 

@@ -56,7 +56,7 @@ class ResultsScreenTest {
             id = TrainingId("1"),
             date = System.currentTimeMillis(),
             description = "Test Session",
-            participantIds = emptyList(),
+            participants = emptyList(),
             runIds = emptyList()
         )
         coEvery { trainingRepository.getAllTrainings() } returns flowOf(listOf(training))
@@ -96,7 +96,7 @@ class ResultsScreenTest {
             id = trainingId,
             date = System.currentTimeMillis(),
             description = "Test Session",
-            participantIds = emptyList(),
+            participants = emptyList(),
             runIds = emptyList()
         )
         coEvery { trainingRepository.getAllTrainings() } returns flowOf(listOf(training))
@@ -143,7 +143,7 @@ class ResultsScreenTest {
             id = TrainingId("1"),
             date = System.currentTimeMillis(),
             description = "Test Session",
-            participantIds = emptyList(),
+            participants = emptyList(),
             runIds = emptyList()
         )
         coEvery { trainingRepository.getAllTrainings() } returns flowOf(listOf(training))

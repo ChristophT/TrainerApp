@@ -17,6 +17,7 @@ import de.hardtthelen.trainerapp.domain.repository.RunRepository
 import de.hardtthelen.trainerapp.domain.repository.TrainingRepository
 import de.hardtthelen.trainerapp.presentation.util.TimerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,11 +31,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Shared ViewModel that manages all training-related state.
  * Mirrors the React Context pattern from the web app.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class TrainingViewModel @Inject constructor(
     private val athleteRepository: AthleteRepository,
@@ -108,7 +111,7 @@ class TrainingViewModel @Inject constructor(
     val currentElapsedTimes: StateFlow<Map<AthleteId, Long>> = flow {
         while (true) {
             emit(Unit)
-            delay(16) // ~60fps
+            delay(16.milliseconds) // ~60fps
         }
     }.combine(_activeRuns) { _, activeRuns ->
         val currentMs = TimerManager.now()
@@ -144,9 +147,9 @@ class TrainingViewModel @Inject constructor(
         viewModelScope.launch {
             // Remove from current training
             _currentTraining.value?.let { training ->
-                if (training.participantIds.contains(id)) {
+                if (training.participantIds().contains(id)) {
                     val updated = training.copy(
-                        participantIds = training.participantIds.filter { it != id }
+                        participants = training.participants.filter { it.athlete.id != id },
                     )
                     trainingRepository.updateTraining(updated)
                     _currentTraining.value = updated
@@ -169,7 +172,7 @@ class TrainingViewModel @Inject constructor(
                 id = TrainingId.newId(),
                 date = TimerManager.wallClockNow(),
                 description = description,
-                participantIds = emptyList(),
+                participants = emptyList(),
                 runIds = emptyList()
             )
             trainingRepository.addTraining(training)
@@ -203,12 +206,13 @@ class TrainingViewModel @Inject constructor(
     fun addParticipant(athleteId: AthleteId) {
         viewModelScope.launch {
             val training = _currentTraining.value ?: return@launch
-            if (training.participantIds.contains(athleteId)) return@launch
+            if (training.participantIds().contains(athleteId)) return@launch
 
-            trainingRepository.addParticipant(training.id, athleteId)
+            val athleteToAdd = athletes.value.find { it.id == athleteId } ?: return@launch
+            val participant = trainingRepository.addParticipant(training.id, athleteToAdd)
 
             val updated = training.copy(
-                participantIds = training.participantIds + athleteId
+                participants = training.participants + participant
             )
             _currentTraining.value = updated
         }
@@ -219,15 +223,16 @@ class TrainingViewModel @Inject constructor(
             val training = _currentTraining.value ?: return@launch
             val group = groups.value.find { it.id == groupId } ?: return@launch
 
-            val newIds = group.memberIds.filter { !training.participantIds.contains(it) }
+            val newIds = group.memberIds.filter { !training.participantIds().contains(it) }
             if (newIds.isEmpty()) return@launch
 
-            newIds.forEach { athleteId ->
-                trainingRepository.addParticipant(training.id, athleteId)
+            val newParticipants = newIds.mapNotNull { athleteId ->
+                val athleteToAdd = athletes.value.find { it.id == athleteId } ?: return@mapNotNull null
+                trainingRepository.addParticipant(training.id, athleteToAdd)
             }
 
             val updated = training.copy(
-                participantIds = training.participantIds + newIds
+                participants = training.participants + newParticipants
             )
             _currentTraining.value = updated
         }
@@ -247,7 +252,7 @@ class TrainingViewModel @Inject constructor(
             startMs = TimerManager.now(),
             note = ""
         )
-        _activeRuns.value = _activeRuns.value + activeRun
+        _activeRuns.value += activeRun
     }
 
     fun stopRun(athleteId: AthleteId) {

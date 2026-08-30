@@ -7,6 +7,7 @@ import de.hardtthelen.trainerapp.domain.model.Run
 import de.hardtthelen.trainerapp.domain.model.RunId
 import de.hardtthelen.trainerapp.domain.model.Training
 import de.hardtthelen.trainerapp.domain.model.TrainingId
+import de.hardtthelen.trainerapp.domain.model.TrainingParticipant
 import org.junit.Test
 
 /**
@@ -20,7 +21,7 @@ class CSVExporterTest {
             id = TrainingId("t1"),
             date = 1770840000000L,
             description = "Intervals",
-            participantIds = emptyList(),
+            participants = emptyList(),
             runIds = emptyList()
         )
         val athletes = emptyList<Athlete>()
@@ -35,11 +36,13 @@ class CSVExporterTest {
     fun `generateSessionCSV exports runs correctly and sorted by date`() {
         val athlete1 = Athlete(AthleteId("a1"), "John Doe")
         val athlete2 = Athlete(AthleteId("a2"), "Jane Smith")
+        val participant1 = TrainingParticipant(athlete1, 1)
+        val participant2 = TrainingParticipant(athlete2, 2)
         val training = Training(
             id = TrainingId("t1"),
             date = 1770840000000L,
             description = "Sprint session",
-            participantIds = listOf(athlete1.id, athlete2.id),
+            participants = listOf(participant1, participant2),
             runIds = listOf(RunId("r1"), RunId("r2"))
         )
         
@@ -83,7 +86,8 @@ class CSVExporterTest {
     @Test
     fun `generateSessionCSV filters out runs without duration`() {
         val athlete = Athlete(AthleteId("a1"), "John Doe")
-        val training = Training(TrainingId("t1"), 0L, "Test", listOf(athlete.id), listOf(RunId("r1"), RunId("r2")))
+        val participant = TrainingParticipant(athlete, 1)
+        val training = Training(TrainingId("t1"), 0L, "Test", listOf(participant), listOf(RunId("r1"), RunId("r2")))
         
         val runWithDuration = Run(RunId("r1"), athlete.id, training.id, 1000L, null, 5000L, "Finished")
         val runWithoutDuration = Run(RunId("r2"), athlete.id, training.id, 2000L, null, null, "Not finished")
@@ -99,7 +103,8 @@ class CSVExporterTest {
     @Test
     fun `generateSessionCSV escapes quotes in notes`() {
         val athlete = Athlete(AthleteId("a1"), "John Doe")
-        val training = Training(TrainingId("t1"), 0L, "Test", listOf(athlete.id), listOf(RunId("r1")))
+        val participant = TrainingParticipant(athlete, 1)
+        val training = Training(TrainingId("t1"), 0L, "Test", listOf(participant), listOf(RunId("r1")))
         
         val run = Run(RunId("r1"), athlete.id, training.id, 1000L, null, 5000L, "Said \"Hello\"")
         
