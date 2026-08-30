@@ -4,12 +4,16 @@ import de.hardtthelen.trainerapp.data.local.database.dao.RunDao
 import de.hardtthelen.trainerapp.data.local.database.dao.TrainingDao
 import de.hardtthelen.trainerapp.data.local.entity.TrainingEntity
 import de.hardtthelen.trainerapp.data.local.entity.TrainingParticipantEntity
+import de.hardtthelen.trainerapp.domain.model.Athlete
 import de.hardtthelen.trainerapp.domain.model.AthleteId
 import de.hardtthelen.trainerapp.domain.model.Training
 import de.hardtthelen.trainerapp.domain.model.TrainingId
+import de.hardtthelen.trainerapp.domain.model.TrainingParticipant
 import de.hardtthelen.trainerapp.domain.repository.TrainingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TrainingRepositoryImpl @Inject constructor(
@@ -31,7 +35,7 @@ class TrainingRepositoryImpl @Inject constructor(
                     id = entity.id,
                     date = entity.date,
                     description = entity.description,
-                    participantIds = emptyList(), // Will be loaded separately via combine
+                    participants = emptyList(), // Will be loaded separately via combine
                     runIds = runIds
                 )
             }
@@ -51,7 +55,7 @@ class TrainingRepositoryImpl @Inject constructor(
             id = entity.id,
             date = entity.date,
             description = entity.description,
-            participantIds = emptyList(), // Would need to fetch from participant table
+            participants = emptyList(), // Would need to fetch from participant table
             runIds = emptyList() // Would need to fetch from runs table
         )
     }
@@ -65,10 +69,8 @@ class TrainingRepositoryImpl @Inject constructor(
         trainingDao.insertTraining(entity)
 
         // Insert participants
-        training.participantIds.forEach { athleteId ->
-            trainingDao.insertParticipant(
-                TrainingParticipantEntity(training.id, athleteId)
-            )
+        training.participants.forEach { participant ->
+            addParticipant(training.id, participant.athlete)
         }
     }
 
@@ -85,10 +87,12 @@ class TrainingRepositoryImpl @Inject constructor(
         trainingDao.deleteTraining(id)
     }
 
-    override suspend fun addParticipant(trainingId: TrainingId, athleteId: AthleteId) {
+    override suspend fun addParticipant(trainingId: TrainingId, athlete: Athlete): TrainingParticipant {
+        val newDisplayOrder = (trainingDao.getParticipants(trainingId).map { list -> list.maxOfOrNull { it.displayOrder } }.first() ?: 0) + 1
         trainingDao.insertParticipant(
-            TrainingParticipantEntity(trainingId, athleteId)
+            TrainingParticipantEntity(trainingId, athlete.id, newDisplayOrder)
         )
+        return TrainingParticipant(athlete, newDisplayOrder)
     }
 
     override suspend fun removeParticipant(trainingId: TrainingId, athleteId: AthleteId) {

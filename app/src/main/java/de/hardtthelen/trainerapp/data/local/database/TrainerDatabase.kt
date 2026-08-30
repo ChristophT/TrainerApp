@@ -23,7 +23,7 @@ import de.hardtthelen.trainerapp.data.local.entity.TrainingParticipantEntity
         TrainingGroupEntity::class,
         GroupMemberEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

@@ -7,6 +7,7 @@ import de.hardtthelen.trainerapp.domain.model.AthleteId
 import de.hardtthelen.trainerapp.domain.model.TrainingGroup
 import de.hardtthelen.trainerapp.domain.model.TrainingGroupId
 import de.hardtthelen.trainerapp.domain.model.TrainingId
+import de.hardtthelen.trainerapp.domain.model.TrainingParticipant
 import de.hardtthelen.trainerapp.domain.repository.AthleteRepository
 import de.hardtthelen.trainerapp.domain.repository.GroupRepository
 import de.hardtthelen.trainerapp.domain.repository.RunRepository
@@ -20,6 +21,7 @@ import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -121,7 +123,7 @@ class TrainingViewModelTest {
             val training = awaitItem()
             assertThat(training).isNotNull()
             assertThat(training?.description).isEqualTo(description)
-            assertThat(training?.participantIds).isEmpty()
+            assertThat(training?.participants).isEmpty()
             assertThat(training?.runIds).isEmpty()
         }
 
@@ -153,6 +155,21 @@ class TrainingViewModelTest {
 
     @Test
     fun `addParticipant adds athlete to current training`() = runTest {
+        val athleteId = AthleteId.newId()
+        val newAthlete = Athlete(athleteId, "Test Athlete")
+        coEvery { athleteRepository.getAllAthletes() } returns flowOf(listOf(newAthlete))
+        val newParticipant = TrainingParticipant(newAthlete, 1)
+        coEvery { trainingRepository.addParticipant(any(), any()) } returns newParticipant
+
+        // Recreate ViewModel to pick up athlete
+        viewModel = TrainingViewModel(
+            athleteRepository, runRepository, trainingRepository, groupRepository
+        )
+
+        // Start collection to make athletes available in athletes.value
+        backgroundScope.launch { viewModel.athletes.collect {} }
+        advanceUntilIdle()
+
         // Setup: Start a training session
         viewModel.startTraining("Test Session")
         advanceUntilIdle()
@@ -160,21 +177,19 @@ class TrainingViewModelTest {
         val trainingId = viewModel.currentTraining.value?.id
         assertThat(trainingId).isNotNull()
 
-        val athleteId = AthleteId.newId()
-
         // Add participant
         viewModel.addParticipant(athleteId)
         advanceUntilIdle()
 
         // Verify repository was called
         coVerify {
-            trainingRepository.addParticipant(trainingId!!, athleteId)
+            trainingRepository.addParticipant(trainingId!!, newAthlete)
         }
 
         // Verify state updated
         viewModel.currentTraining.test {
             val training = awaitItem()
-            assertThat(training?.participantIds).contains(athleteId)
+            assertThat(training?.participants).contains(newParticipant)
         }
     }
 
@@ -260,6 +275,17 @@ class TrainingViewModelTest {
         val athleteId = AthleteId.newId()
         val athlete = Athlete(id = athleteId, name = "Test Athlete")
         coEvery { athleteRepository.getAthleteById(athleteId) } returns athlete
+        coEvery { athleteRepository.getAllAthletes() } returns flowOf(listOf(athlete))
+        coEvery { trainingRepository.addParticipant(any(), any()) } returns TrainingParticipant(athlete, 1)
+
+        // Recreate ViewModel to pick up athlete
+        viewModel = TrainingViewModel(
+            athleteRepository, runRepository, trainingRepository, groupRepository
+        )
+
+        // Start collection
+        backgroundScope.launch { viewModel.athletes.collect {} }
+        advanceUntilIdle()
 
         // Start training and add participant
         viewModel.startTraining("Test Session")
@@ -278,7 +304,7 @@ class TrainingViewModelTest {
         // Verify removed from training
         viewModel.currentTraining.test {
             val training = awaitItem()
-            assertThat(training?.participantIds).doesNotContain(athleteId)
+            assertThat(training?.participants?.map { it.athlete.id }).doesNotContain(athleteId)
         }
     }
 
@@ -303,38 +329,47 @@ class TrainingViewModelTest {
     fun `addGroupToTraining adds all group members as participants`() = runTest {
         // Setup: Group with members
         val groupId = TrainingGroupId.newId()
-        val athleteIds = listOf(AthleteId.newId(), AthleteId.newId(), AthleteId.newId())
+        val athleteId1 = AthleteId.newId()
+        val athleteId2 = AthleteId.newId()
+        val athleteId3 = AthleteId.newId()
+        val athleteIds = listOf(athleteId1, athleteId2, athleteId3)
+        val newAthlete1 = Athlete(athleteId1, "New Athlete1")
+        val newAthlete2 = Athlete(athleteId2, "New Athlete2")
+        val newAthlete3 = Athlete(athleteId3, "New Athlete3")
         val group = TrainingGroup(
             id = groupId,
             name = "Test Group",
             memberIds = athleteIds
         )
-
+        coEvery { athleteRepository.getAllAthletes() } returns flowOf(listOf(newAthlete1, newAthlete2, newAthlete3))
         coEvery { groupRepository.getAllGroups() } returns flowOf(listOf(group))
+
+        coEvery { trainingRepository.addParticipant(any(), any()) } answers {
+            TrainingParticipant(it.invocation.args[1] as Athlete, 0)
+        }
 
         // Recreate ViewModel to pick up new groups
         viewModel = TrainingViewModel(
             athleteRepository, runRepository, trainingRepository, groupRepository
         )
 
-        // Ensure groups are loaded (SharingStarted.WhileSubscribed needs a subscriber)
-        viewModel.groups.test {
-            assertThat(awaitItem()).isEmpty() // Initial value
-            assertThat(awaitItem()).isEqualTo(listOf(group)) // Value from repository
+        // Start collection to trigger WhileSubscribed flows
+        backgroundScope.launch { viewModel.athletes.collect {} }
+        backgroundScope.launch { viewModel.groups.collect {} }
+        advanceUntilIdle()
 
-            // Start training
-            viewModel.startTraining("Test Session")
-            advanceUntilIdle()
+        // Start training
+        viewModel.startTraining("Test Session")
+        advanceUntilIdle()
 
-            // Add group to training
-            viewModel.addGroupToTraining(groupId)
-            advanceUntilIdle()
+        // Add group to training
+        viewModel.addGroupToTraining(groupId)
+        advanceUntilIdle()
 
-            // Verify state updated
-            viewModel.currentTraining.test {
-                val training = awaitItem()
-                assertThat(training?.participantIds).containsExactlyElementsIn(athleteIds)
-            }
+        // Verify state updated
+        viewModel.currentTraining.test {
+            val training = awaitItem()
+            assertThat(training?.participants?.map { it.athlete.id }).containsExactlyElementsIn(athleteIds)
         }
     }
 

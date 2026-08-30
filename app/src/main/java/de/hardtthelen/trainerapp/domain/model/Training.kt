@@ -8,9 +8,17 @@ data class Training(
     val id: TrainingId,
     val date: Long,                // Timestamp in milliseconds
     val description: String,
-    val participantIds: List<AthleteId>,
+    val participants: List<TrainingParticipant>,
     val runIds: List<RunId>
-)
+) {
+    fun participantsByDisplayOrder(): List<TrainingParticipant> {
+        return participants.sortedBy { it.displayOrder }
+    }
+
+    fun participantIds(): List<AthleteId> {
+        return participants.map { it.athlete.id }
+    }
+}
 
 @Parcelize
 @JvmInline
