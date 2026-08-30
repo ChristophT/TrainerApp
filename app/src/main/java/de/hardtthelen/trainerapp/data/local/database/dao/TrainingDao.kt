@@ -27,9 +27,6 @@ interface TrainingDao {
     @Query("SELECT * FROM training_participants WHERE trainingId = :trainingId")
     fun getParticipants(trainingId: TrainingId): Flow<List<TrainingParticipantEntity>>
 
-    @Query("SELECT athleteId FROM training_participants WHERE trainingId = :trainingId")
-    fun getParticipantIds(trainingId: TrainingId): Flow<List<AthleteId>>
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertParticipant(participant: TrainingParticipantEntity)
 
